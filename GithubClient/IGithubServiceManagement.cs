@@ -260,5 +260,23 @@ namespace GithubClient
         [WebInvoke(Method = "DELETE", UriTemplate = "/repos/{owner}/{repo}/issues/{number}/comments", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
         IAsyncResult BeginDeleteComment(string owner, string repo, string id, AsyncCallback callback, object state);
         void EndDeleteComment(IAsyncResult asyncResult);
+
+        [Description("List events for an issue")]
+        [OperationContract(AsyncPattern = true)]
+        [WebInvoke(Method = "GET", UriTemplate = "/repos/{owner}/{repo}/issues/{number}/events", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
+        IAsyncResult BeginGetEventsFromIssue(string owner, string repo, string number, AsyncCallback callback, object state);
+        IList<GithubEvent> EndGetEventsFromIssue(IAsyncResult asyncResult);
+
+        [Description("List events for a repository")]
+        [OperationContract(AsyncPattern = true)]
+        [WebInvoke(Method = "GET", UriTemplate = "/repos/{owner}/{repo}/issues/events", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
+        IAsyncResult BeginGetEventsFromRepo(string owner, string repo, AsyncCallback callback, object state);
+        IList<GithubEvent> EndGetEventsFromRepo(IAsyncResult asyncResult);
+
+        [Description("Get a single event")]
+        [OperationContract(AsyncPattern = true)]
+        [WebInvoke(Method = "GET", UriTemplate = "/repos/{owner}/{repo}/issues/events/{id}", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
+        IAsyncResult BeginGetEvent(string owner, string repo, string id, AsyncCallback callback, object state);
+        GithubEvent EndGetEvent(IAsyncResult asyncResult);
     }
 }

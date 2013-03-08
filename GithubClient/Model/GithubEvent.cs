@@ -16,28 +16,21 @@ using System.Runtime.Serialization;
 
 namespace GithubClient.Model
 {
-    [DataContract]
-    public class GithubComment
+    public class GithubEvent
     {
-        [DataMember(Name = "id", IsRequired = false)]
-        public string Id { get; set; }
-
         [DataMember(Name = "url", IsRequired = false)]
         public string Url { get; set; }
 
-        [DataMember(Name = "html_url", IsRequired = false)]
-        public string HtmlUrl { get; set; }
+        [DataMember(Name = "actor", IsRequired = false)]
+        public GithubUser Actor { get; set; }
 
-        [DataMember(Name = "body", IsRequired = false)]
-        public string Body { get; set; }
+        [DataMember(Name = "event", IsRequired = false)]
+        public string Event { get; set; }
 
-        [DataMember(Name = "user", IsRequired = false)]
-        public GithubUser User { get; set; }
+        [DataMember(Name = "commit_id", IsRequired = false)]
+        public string CommitId { get; set; }
 
         [DataMember(Name = "created_at", IsRequired = false)]
         public string CreatedAt { get; set; }
-
-        [DataMember(Name = "updated_at", IsRequired = false)]
-        public string UpdatedAt { get; set; }
     }
 }
