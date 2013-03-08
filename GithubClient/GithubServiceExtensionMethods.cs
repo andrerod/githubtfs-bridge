@@ -12,7 +12,6 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
-using System.Globalization;
 using GithubClient.Model;
 using System.Collections.Generic;
 
@@ -68,101 +67,6 @@ namespace GithubClient
         public static void TestRepositoryHook(this IGithubServiceManagement proxy, string owner, string repository, string id)
         {
             proxy.EndTestRepositoryHook(proxy.BeginTestRepositoryHook(owner, repository, id, null, null));
-        }
-
-        public static List<GithubIssue> GetIssues(this IGithubServiceManagement proxy)
-        {
-            return proxy.EndGetIssues(proxy.BeginGetIssues(null, null));
-        }
-
-        public static List<GithubIssue> GetIssuesFromUser(this IGithubServiceManagement proxy)
-        {
-            return proxy.EndGetIssuesFromUser(proxy.BeginGetIssuesFromUser(null, null));
-        }
-
-        public static List<GithubIssue> GetIssuesFromOrg(this IGithubServiceManagement proxy, string organization)
-        {
-            return proxy.EndGetIssuesFromOrg(proxy.BeginGetIssuesFromOrg(organization, null, null));
-        }
-
-        public static List<GithubIssue> GetIssuesFromRepo(this IGithubServiceManagement proxy, string owner, string repo)
-        {
-            return proxy.EndGetIssuesFromRepo(proxy.BeginGetIssuesFromRepo(owner, repo, null, null));
-        }
-
-        public static GithubIssue GetIssue(this IGithubServiceManagement proxy, string owner, string repo, int number)
-        {
-            return proxy.EndGetIssue(proxy.BeginGetIssue(owner, repo, number.ToString(CultureInfo.InvariantCulture), null, null));
-        }
-
-        public static GithubIssue CreateIssue(this IGithubServiceManagement proxy, string owner, string repo, GithubIssue issue)
-        {
-            return proxy.EndCreateIssue(proxy.BeginCreateIssue(owner, repo, issue, null, null));
-        }
-
-        public static GithubIssue UpdateIssue(this IGithubServiceManagement proxy, string owner, string repo, int number, GithubIssue issue)
-        {
-            return proxy.EndUpdateIssue(proxy.BeginUpdateIssue(owner, repo, number.ToString(CultureInfo.InvariantCulture), issue, null, null));
-        }
-
-        public static IList<GithubLabel> GetLabels(this IGithubServiceManagement proxy, string owner, string repo)
-        {
-            return proxy.EndGetLabels(proxy.BeginGetLabels(owner, repo, null, null));
-        }
-
-        public static GithubLabel GetLabel(this IGithubServiceManagement proxy, string owner, string repo, string name)
-        {
-            return proxy.EndGetLabel(proxy.BeginGetLabel(owner, repo, name, null, null));
-        }
-
-        public static GithubLabel CreateLabel(this IGithubServiceManagement proxy, string owner, string repo, GithubLabel label)
-        {
-            return proxy.EndCreateLabel(proxy.BeginCreateLabel(owner, repo, label, null, null));
-        }
-
-        public static GithubLabel UpdateLabel(this IGithubServiceManagement proxy, string owner, string repo, string name, GithubLabel label)
-        {
-            return proxy.EndUpdateLabel(proxy.BeginUpdateLabel(owner, repo, name, label, null, null));
-        }
-
-        public static GithubLabel DeleteLabel(this IGithubServiceManagement proxy, string owner, string repo,
-                                              string name)
-        {
-            return proxy.EndDeleteLabel(proxy.BeginDeleteLabel(owner, repo, name, null, null));
-        }
-
-        public static IList<GithubLabel> GetLabelsFromIssue(this IGithubServiceManagement proxy, string owner, string repo, string number)
-        {
-            return proxy.EndGetLabelsFromIssue(proxy.BeginGetLabelsFromIssue(owner, repo, number, null, null));
-        }
-
-        public static IList<GithubLabel> CreateLabelsOnIssue(this IGithubServiceManagement proxy, string owner, string repo, string number,
-                                                             IList<string> labels)
-        {
-            return proxy.EndCreateLabelsOnIssue(proxy.BeginCreateLabelsOnIssue(owner, repo, number, labels, null, null));
-        }
-
-        public static void DeleteLabelFromIssue(this IGithubServiceManagement proxy, string owner, string repo, string number,
-                                  string name)
-        {
-            proxy.EndDeleteLabelFromIssue(proxy.BeginDeleteLabelFromIssue(owner, repo, number, name, null, null));
-        }
-
-        public static void UpdateLabelsOnIssue(this IGithubServiceManagement proxy, string owner, string repo, string number, IList<string> labels)
-        {
-            proxy.EndUpdateLabelsOnIssue(proxy.BeginUpdateLabelsOnIssue(owner, repo, number, labels, null, null));
-        }
-
-        public static void DeleteLabelsFromIssue(this IGithubServiceManagement proxy, string owner, string repo,
-                                                 string number)
-        {
-            proxy.EndDeleteLabelsFromIssue(proxy.BeginDeleteLabelsFromIssue(owner, repo, number, null, null));
-        }
-
-        public static IList<GithubLabel> GetLabelsFromMilestone(this IGithubServiceManagement proxy, string owner, string repo,
-                                                  string number)
-        {
-            return proxy.EndGetLabelsFromMilestone(proxy.BeginGetLabelsFromMilestone(owner, repo, number, null, null));
         }
     }
 }
