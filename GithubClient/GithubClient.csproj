@@ -46,12 +46,15 @@
   <ItemGroup>
     <Compile Include="GithubAuthHeaderInserter.cs" />
     <Compile Include="GithubClient.cs" />
+    <Compile Include="GithubServiceCommentsExtensionMethods.cs" />
     <Compile Include="GithubServiceExtensionMethods.cs" />
     <Compile Include="GithubServiceIssuesExtensionMethods.cs" />
     <Compile Include="GithubServiceLabelsExtensionMethods.cs" />
+    <Compile Include="GithubServiceMilestonesExtensionMethods.cs" />
     <Compile Include="IGithubServiceManagement.cs" />
     <Compile Include="Model\GithubAuthorization.cs" />
     <Compile Include="Model\GithubAuthorizationRequest.cs" />
+    <Compile Include="Model\GithubComment.cs" />
     <Compile Include="Model\GithubIssue.cs" />
     <Compile Include="Model\GithubLabel.cs" />
     <Compile Include="Model\GithubMilestone.cs" />

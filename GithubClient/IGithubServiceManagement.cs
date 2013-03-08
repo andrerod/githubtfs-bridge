@@ -194,5 +194,71 @@ namespace GithubClient
         [WebInvoke(Method = "GET", UriTemplate = "/repos/{owner}/{repo}/milestones/{number}/labels", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
         IAsyncResult BeginGetLabelsFromMilestone(string owner, string repo, string number, AsyncCallback callback, object state);
         IList<GithubLabel> EndGetLabelsFromMilestone(IAsyncResult asyncResult);
+
+        [Description("List milestones for a repository")]
+        [OperationContract(AsyncPattern = true)]
+        [WebInvoke(Method = "GET", UriTemplate = "/repos/{owner}/{repo}/milestones", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
+        IAsyncResult BeginGetMilestonesFromRepo(string owner, string repo, AsyncCallback callback, object state);
+        IList<GithubMilestone> EndGetMilestonesFromRepo(IAsyncResult asyncResult);
+
+        [Description("Get a single milestone")]
+        [OperationContract(AsyncPattern = true)]
+        [WebInvoke(Method = "GET", UriTemplate = "/repos/{owner}/{repo}/milestones/{number}", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
+        IAsyncResult BeginGetMilestoneFromRepo(string owner, string repo, string number, AsyncCallback callback, object state);
+        GithubMilestone EndGetMilestoneFromRepo(IAsyncResult asyncResult);
+
+        [Description("Create a milestone")]
+        [OperationContract(AsyncPattern = true)]
+        [WebInvoke(Method = "POST", UriTemplate = "/repos/{owner}/{repo}/milestones", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
+        IAsyncResult BeginCreateMilestoneFromRepo(string owner, string repo, GithubMilestone milestone, AsyncCallback callback, object state);
+        GithubMilestone EndCreateMilestoneFromRepo(IAsyncResult asyncResult);
+
+        [Description("Update a milestone")]
+        [OperationContract(AsyncPattern = true)]
+        [WebInvoke(Method = "PATCH", UriTemplate = "/repos/{owner}/{repo}/milestones/{number}", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
+        IAsyncResult BeginUpdateMilestoneFromRepo(string owner, string repo, string number, GithubMilestone milestone, AsyncCallback callback, object state);
+        GithubMilestone EndUpdateMilestoneFromRepo(IAsyncResult asyncResult);
+        
+        [Description("Delete a milestone")]
+        [OperationContract(AsyncPattern = true)]
+        [WebInvoke(Method = "DELETE", UriTemplate = "/repos/{owner}/{repo}/milestones/{number}", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
+        IAsyncResult BeginDeleteMilestoneFromRepo(string owner, string repo, string number, AsyncCallback callback, object state);
+        void EndDeleteMilestoneFromRepo(IAsyncResult asyncResult);
+
+        [Description("List comments on an issue")]
+        [OperationContract(AsyncPattern = true)]
+        [WebInvoke(Method = "GET", UriTemplate = "/repos/{owner}/{repo}/issues/{number}/comments", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
+        IAsyncResult BeginGetCommentsFromIssue(string owner, string repo, string number, AsyncCallback callback, object state);
+        IList<GithubComment> EndGetCommentsFromIssue(IAsyncResult asyncResult);
+
+        [Description("List comments in a repository")]
+        [OperationContract(AsyncPattern = true)]
+        [WebInvoke(Method = "GET", UriTemplate = "/repos/{owner}/{repo}/issues/comments", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
+        IAsyncResult BeginGetCommentsFromRepo(string owner, string repo, AsyncCallback callback, object state);
+        IList<GithubComment> EndGetCommentsFromRepo(IAsyncResult asyncResult);
+
+        [Description("Get a single comment")]
+        [OperationContract(AsyncPattern = true)]
+        [WebInvoke(Method = "GET", UriTemplate = "/repos/{owner}/{repo}/issues/comments/{id}", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
+        IAsyncResult BeginGetCommentFromIssue(string owner, string repo, string id, AsyncCallback callback, object state);
+        IList<GithubComment> EndGetCommentFromIssue(IAsyncResult asyncResult);
+
+        [Description("Create a comment")]
+        [OperationContract(AsyncPattern = true)]
+        [WebInvoke(Method = "POST", UriTemplate = "/repos/{owner}/{repo}/issues/{number}/comments", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
+        IAsyncResult BeginCreateComment(string owner, string repo, string id, GithubComment comment, AsyncCallback callback, object state);
+        GithubComment EndCreateComment(IAsyncResult asyncResult);
+
+        [Description("Edit a comment")]
+        [OperationContract(AsyncPattern = true)]
+        [WebInvoke(Method = "PATCH", UriTemplate = "/repos/{owner}/{repo}/issues/{number}/comments", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
+        IAsyncResult BeginUpdateComment(string owner, string repo, string id, GithubComment comment, AsyncCallback callback, object state);
+        GithubComment EndUpdateComment(IAsyncResult asyncResult);
+
+        [Description("Delete a comment")]
+        [OperationContract(AsyncPattern = true)]
+        [WebInvoke(Method = "DELETE", UriTemplate = "/repos/{owner}/{repo}/issues/{number}/comments", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
+        IAsyncResult BeginDeleteComment(string owner, string repo, string id, AsyncCallback callback, object state);
+        void EndDeleteComment(IAsyncResult asyncResult);
     }
 }
