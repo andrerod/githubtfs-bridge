@@ -278,5 +278,11 @@ namespace GithubClient
         [WebInvoke(Method = "GET", UriTemplate = "/repos/{owner}/{repo}/issues/events/{id}", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
         IAsyncResult BeginGetEvent(string owner, string repo, string id, AsyncCallback callback, object state);
         GithubEvent EndGetEvent(IAsyncResult asyncResult);
+
+        [Description("List assignees")]
+        [OperationContract(AsyncPattern = true)]
+        [WebInvoke(Method = "GET", UriTemplate = "/repos/{owner}/{repo}/assignees", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
+        IAsyncResult BeginGetAssignees(string owner, string repo, AsyncCallback callback, object state);
+        IList<GithubUser> EndGetAssignees(IAsyncResult asyncResult);
     }
 }
