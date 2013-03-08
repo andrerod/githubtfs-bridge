@@ -38,7 +38,7 @@ namespace ConsoleApplication1
                 var workItems = wiStore.Query(query.QueryText.Replace("@project", "'" + query.Project.Name + "'"));
                 foreach (WorkItem workItem in workItems)
                 {
-                    githubChannel.CreateIssue("andrerod", "testrepo", CreateGithubIssue(workItem));
+                    githubChannel.CreateIssue("andrerod", "testissuesrepo", CreateGithubIssue(workItem));
                 }
             }
             

@@ -128,5 +128,71 @@ namespace GithubClient
         [WebInvoke(Method = "PATCH", UriTemplate = "/repos/{owner}/{repo}/issues/{number}", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
         IAsyncResult BeginUpdateIssue(string owner, string repo, string number, GithubIssue issue, AsyncCallback callback, object state);
         GithubIssue EndUpdateIssue(IAsyncResult asyncResult);
+
+        [Description("List all labels for this repository")]
+        [OperationContract(AsyncPattern = true)]
+        [WebInvoke(Method = "GET", UriTemplate = "/repos/{owner}/{repo}/labels", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
+        IAsyncResult BeginGetLabels(string owner, string repo, AsyncCallback callback, object state);
+        IList<GithubLabel> EndGetLabels(IAsyncResult asyncResult);
+
+        [Description("Get a single label")]
+        [OperationContract(AsyncPattern = true)]
+        [WebInvoke(Method = "GET", UriTemplate = "/repos/{owner}/{repo}/labels/{name}", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
+        IAsyncResult BeginGetLabel(string owner, string repo, string name, AsyncCallback callback, object state);
+        GithubLabel EndGetLabel(IAsyncResult asyncResult);
+
+        [Description("Create a label")]
+        [OperationContract(AsyncPattern = true)]
+        [WebInvoke(Method = "POST", UriTemplate = "/repos/{owner}/{repo}/labels", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
+        IAsyncResult BeginCreateLabel(string owner, string repo, GithubLabel label, AsyncCallback callback, object state);
+        GithubLabel EndCreateLabel(IAsyncResult asyncResult);
+
+        [Description("Update a label")]
+        [OperationContract(AsyncPattern = true)]
+        [WebInvoke(Method = "PATCH", UriTemplate = "/repos/{owner}/{repo}/labels/{name}", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
+        IAsyncResult BeginUpdateLabel(string owner, string repo, string name, GithubLabel label, AsyncCallback callback, object state);
+        GithubLabel EndUpdateLabel(IAsyncResult asyncResult);
+
+        [Description("Delete a label")]
+        [OperationContract(AsyncPattern = true)]
+        [WebInvoke(Method = "DELETE", UriTemplate = "/repos/{owner}/{repo}/labels/{name}", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
+        IAsyncResult BeginDeleteLabel(string owner, string repo, string name, AsyncCallback callback, object state);
+        GithubLabel EndDeleteLabel(IAsyncResult asyncResult);
+
+        [Description("List labels on an issue")]
+        [OperationContract(AsyncPattern = true)]
+        [WebInvoke(Method = "GET", UriTemplate = "/repos/{owner}/{repo}/issues/{number}/labels", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
+        IAsyncResult BeginGetLabelsFromIssue(string owner, string repo, string number, AsyncCallback callback, object state);
+        IList<GithubLabel> EndGetLabelsFromIssue(IAsyncResult asyncResult);
+
+        [Description("Add labels to an issue")]
+        [OperationContract(AsyncPattern = true)]
+        [WebInvoke(Method = "POST", UriTemplate = "/repos/{owner}/{repo}/issues/{number}/labels", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
+        IAsyncResult BeginCreateLabelsOnIssue(string owner, string repo, string number, IList<string> labels, AsyncCallback callback, object state);
+        IList<GithubLabel> EndCreateLabelsOnIssue(IAsyncResult asyncResult);
+
+        [Description("Remove a label from an issue")]
+        [OperationContract(AsyncPattern = true)]
+        [WebInvoke(Method = "DELETE", UriTemplate = "/repos/{owner}/{repo}/issues/{number}/labels/{name}", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
+        IAsyncResult BeginDeleteLabelFromIssue(string owner, string repo, string number, string name, AsyncCallback callback, object state);
+        void EndDeleteLabelFromIssue(IAsyncResult asyncResult);
+
+        [Description("Replace all labels for an issue")]
+        [OperationContract(AsyncPattern = true)]
+        [WebInvoke(Method = "PUT", UriTemplate = "/repos/{owner}/{repo}/issues/{number}/labels", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
+        IAsyncResult BeginUpdateLabelsOnIssue(string owner, string repo, string number, IList<string> labels, AsyncCallback callback, object state);
+        void EndUpdateLabelsOnIssue(IAsyncResult asyncResult);
+
+        [Description("Remove all labels from an issue")]
+        [OperationContract(AsyncPattern = true)]
+        [WebInvoke(Method = "DELETE", UriTemplate = "/repos/{owner}/{repo}/issues/{number}/labels", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
+        IAsyncResult BeginDeleteLabelsFromIssue(string owner, string repo, string number, AsyncCallback callback, object state);
+        void EndDeleteLabelsFromIssue(IAsyncResult asyncResult);
+
+        [Description("Get labels for every issue in a milestone")]
+        [OperationContract(AsyncPattern = true)]
+        [WebInvoke(Method = "GET", UriTemplate = "/repos/{owner}/{repo}/milestones/{number}/labels", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
+        IAsyncResult BeginGetLabelsFromMilestone(string owner, string repo, string number, AsyncCallback callback, object state);
+        IList<GithubLabel> EndGetLabelsFromMilestone(IAsyncResult asyncResult);
     }
 }
