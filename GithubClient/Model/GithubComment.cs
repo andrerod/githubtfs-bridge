@@ -19,25 +19,25 @@ namespace GithubClient.Model
     [DataContract]
     public class GithubComment
     {
-        [DataMember(Name = "id", IsRequired = false)]
+        [DataMember(Name = "id", IsRequired = false, EmitDefaultValue = false)]
         public string Id { get; set; }
 
-        [DataMember(Name = "url", IsRequired = false)]
+        [DataMember(Name = "url", IsRequired = false, EmitDefaultValue = false)]
         public string Url { get; set; }
 
-        [DataMember(Name = "html_url", IsRequired = false)]
+        [DataMember(Name = "html_url", IsRequired = false, EmitDefaultValue = false)]
         public string HtmlUrl { get; set; }
 
-        [DataMember(Name = "body", IsRequired = false)]
+        [DataMember(Name = "body", IsRequired = false, EmitDefaultValue = false)]
         public string Body { get; set; }
 
-        [DataMember(Name = "user", IsRequired = false)]
+        [DataMember(Name = "user", IsRequired = false, EmitDefaultValue = false)]
         public GithubUser User { get; set; }
 
-        [DataMember(Name = "created_at", IsRequired = false)]
+        [DataMember(Name = "created_at", IsRequired = false, EmitDefaultValue = false)]
         public string CreatedAt { get; set; }
 
-        [DataMember(Name = "updated_at", IsRequired = false)]
+        [DataMember(Name = "updated_at", IsRequired = false, EmitDefaultValue = false)]
         public string UpdatedAt { get; set; }
     }
 }

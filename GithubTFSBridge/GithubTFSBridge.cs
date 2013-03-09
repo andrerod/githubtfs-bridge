@@ -120,7 +120,7 @@ namespace ConsoleApplication1
                 {
                     GithubChannel.CreateComment(GithubOwner, GithubRepository, githubIssue.Number.ToString(), new GithubComment
                     {
-                        Body = string.Format("[{0} - {1}]: {2}", commentWorkedItem.WorkItem.ChangedDate, commentWorkedItem.WorkItem.ChangedBy, commentWorkedItem.Fields["history"])
+                        Body = string.Format("[{0} - {1}]: {2}", commentWorkedItem.WorkItem.ChangedDate, commentWorkedItem.WorkItem.ChangedBy, commentWorkedItem.Fields["history"].Value)
                     });
                 }
             }
@@ -128,9 +128,22 @@ namespace ConsoleApplication1
             {
                 GithubChannel.UpdateIssue(GithubOwner, GithubRepository, githubIssue.Number.ToString(), githubIssueRequest);
 
-                // TODO: implement comments
-                // Create or update issue comments
-                // var comments = GithubChannel.GetCommentFromIssue(GithubOwner, GithubRepository, githubIssue.Number.ToString());                
+                var historyComments = workItem.Revisions.Cast<Revision>().Where(
+                        w => !string.IsNullOrEmpty(w.Fields["history"].Value as string));
+
+                var comments = GithubChannel.GetCommentFromIssue(GithubOwner, GithubRepository, githubIssue.Number.ToString());
+                // Add, added comments
+                foreach (Revision commentWorkedItem in historyComments)
+                {
+                    var body = string.Format("[{0} - {1}]: {2}", commentWorkedItem.WorkItem.ChangedDate, commentWorkedItem.WorkItem.ChangedBy, commentWorkedItem.Fields["history"].Value);
+                    if (!comments.Any(c => c.Body.Equals(body)))
+                    {
+                        GithubChannel.CreateComment(GithubOwner, GithubRepository, githubIssue.Number.ToString(), new GithubComment
+                        {
+                            Body = string.Format("[{0} - {1}]: {2}", commentWorkedItem.WorkItem.ChangedDate, commentWorkedItem.WorkItem.ChangedBy, commentWorkedItem.Fields["history"].Value)
+                        });
+                    }
+                }
             }
 
             return githubIssueRequest;
