@@ -42,7 +42,7 @@ namespace GithubClient.Model
         [DataMember(Name = "user", IsRequired = false)]
         public GithubUser User { get; set; }
 
-        [DataMember(Name = "label", IsRequired = false)]
+        [DataMember(Name = "labels", IsRequired = false)]
         public IList<GithubLabel> Labels { get; set; }
 
         [DataMember(Name = "assignee", IsRequired = false)]
@@ -70,5 +70,27 @@ namespace GithubClient.Model
         {
             return Number - ((GithubIssue)obj).Number;
         }
+    }
+
+    [DataContract]
+    public class GithubIssueRequest
+    {
+        [DataMember(Name = "state", IsRequired = true)]
+        public string State { get; set; }
+        
+        [DataMember(Name = "title", IsRequired = true)]
+        public string Title { get; set; }
+
+        [DataMember(Name = "body", IsRequired = true)]
+        public string Body { get; set; }
+
+        [DataMember(Name = "labels", IsRequired = false)]
+        public IList<string> Labels { get; set; }
+
+        [DataMember(Name = "assignee", IsRequired = false)]
+        public string Assignee { get; set; }
+
+        [DataMember(Name = "milestone", IsRequired = false)]
+        public int? Milestone { get; set; }
     }
 }

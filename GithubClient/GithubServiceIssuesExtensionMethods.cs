@@ -45,12 +45,12 @@ namespace GithubClient
             return proxy.EndGetIssue(proxy.BeginGetIssue(owner, repo, number.ToString(CultureInfo.InvariantCulture), null, null));
         }
 
-        public static GithubIssue CreateIssue(this IGithubServiceManagement proxy, string owner, string repo, GithubIssue issue)
+        public static GithubIssue CreateIssue(this IGithubServiceManagement proxy, string owner, string repo, GithubIssueRequest issue)
         {
             return proxy.EndCreateIssue(proxy.BeginCreateIssue(owner, repo, issue, null, null));
         }
 
-        public static GithubIssue UpdateIssue(this IGithubServiceManagement proxy, string owner, string repo, int number, GithubIssue issue)
+        public static GithubIssue UpdateIssue(this IGithubServiceManagement proxy, string owner, string repo, int number, GithubIssueRequest issue)
         {
             return proxy.EndUpdateIssue(proxy.BeginUpdateIssue(owner, repo, number.ToString(CultureInfo.InvariantCulture), issue, null, null));
         }

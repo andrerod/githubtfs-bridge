@@ -120,13 +120,13 @@ namespace GithubClient
         [Description("Creates an issue")]
         [OperationContract(AsyncPattern = true)]
         [WebInvoke(Method = "POST", UriTemplate = "/repos/{owner}/{repo}/issues", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
-        IAsyncResult BeginCreateIssue(string owner, string repo, GithubIssue issue, AsyncCallback callback, object state);
+        IAsyncResult BeginCreateIssue(string owner, string repo, GithubIssueRequest issue, AsyncCallback callback, object state);
         GithubIssue EndCreateIssue(IAsyncResult asyncResult);
 
         [Description("Updates an issue")]
         [OperationContract(AsyncPattern = true)]
         [WebInvoke(Method = "PATCH", UriTemplate = "/repos/{owner}/{repo}/issues/{number}", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
-        IAsyncResult BeginUpdateIssue(string owner, string repo, string number, GithubIssue issue, AsyncCallback callback, object state);
+        IAsyncResult BeginUpdateIssue(string owner, string repo, string number, GithubIssueRequest issue, AsyncCallback callback, object state);
         GithubIssue EndUpdateIssue(IAsyncResult asyncResult);
 
         [Description("List all labels for this repository")]
