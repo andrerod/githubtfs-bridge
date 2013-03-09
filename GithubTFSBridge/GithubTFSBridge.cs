@@ -33,7 +33,8 @@ namespace ConsoleApplication1
         private const string WorkItemTypeColor = "0000FF";
         private const string WorkItemPriorityColor = "FF0000";
 
-        private IDictionary<string, GithubUser> GithubUsers { get; set; } 
+        private IDictionary<string, GithubUser> GithubUsers { get; set; }
+        private IDictionary<string, GithubMilestone> GithubMilestones { get; set; } 
 
         public GithubTFSBridge (string githubUsername, string githubPassword, string githubOwner, string githubRepository, string tfsServerAddress, string tfsPath)
         {
@@ -45,6 +46,7 @@ namespace ConsoleApplication1
             GithubChannel = GithubClient.GithubClient.CreateChannel(githubUsername, githubPassword);
 
             GithubUsers = new Dictionary<string, GithubUser>();
+            GithubMilestones = new Dictionary<string, GithubMilestone>();
         }
 
         public void Synchronize()
@@ -142,18 +144,6 @@ namespace ConsoleApplication1
             return user != null ? user.Login : null;
         }
 
-        private GithubUser GetGithubUser(string userLogin)
-        {
-            if (GithubUsers.ContainsKey(userLogin))
-            {
-                return GithubUsers[userLogin];
-            }
-
-            GithubUser githubUser = GithubChannel.GetUser(userLogin);
-            GithubUsers[userLogin] = githubUser;
-            return githubUser;
-        }
-
         private string CreateOrUpdateLabel(IEnumerable<GithubLabel> labels, string name, string color)
         {
             GithubLabel typeLabel = labels.FirstOrDefault(l => l.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
@@ -174,7 +164,7 @@ namespace ConsoleApplication1
             return name;
         }
 
-        private string CreateOrUpdateMilestone(WorkItem workItem)
+        private int CreateOrUpdateMilestone(WorkItem workItem)
         {
             // Iteration Path
             var iterationPath = GetFieldValue(workItem, "Iteration Path");
@@ -182,8 +172,7 @@ namespace ConsoleApplication1
             var iterationName = iterationParts[iterationParts.Length - 1];
 
             IList<GithubMilestone> milestones = GithubChannel.GetMilestonesFromRepo(GithubOwner, GithubRepository);
-            GithubMilestone gihubMilestone = 
-            return iterationName;
+            return (int)GetGithubMilestone(iterationName).Number;
         }
 
         private string GetGithubIssueState(WorkItem workItem)
@@ -215,6 +204,37 @@ namespace ConsoleApplication1
             return new List<string>(new[] {
                 CreateOrUpdateLabel(labels, workItem.Type.Name, WorkItemTypeColor),
                 CreateOrUpdateLabel(labels, GetFieldValue(workItem, "priority"), WorkItemPriorityColor)
+            });
+        }
+
+        // TODO: Move to some sort of repository
+        private GithubUser GetGithubUser(string userLogin)
+        {
+            if (GithubUsers.ContainsKey(userLogin))
+            {
+                return GithubUsers[userLogin];
+            }
+
+            GithubUser githubUser = GithubChannel.GetUser(userLogin);
+            GithubUsers[userLogin] = githubUser;
+            return githubUser;
+        }
+
+        private GithubMilestone GetGithubMilestone(string title)
+        {
+            if (GithubMilestones == null)
+            {
+                GithubMilestones = GithubChannel.GetMilestonesFromRepo(GithubOwner, GithubRepository).ToDictionary(m => m.Description, m => m);    
+            }
+
+            if (GithubMilestones.ContainsKey(title))
+            {
+                return GithubMilestones[title];
+            }
+
+            return GithubChannel.CreateMilestoneFromRepo(GithubOwner, GithubRepository, new GithubMilestone
+            {
+                Title = title
             });
         }
     }

@@ -22,7 +22,7 @@ namespace GithubClient.Model
         public string Url { get; set; }
 
         [DataMember(Name = "number", IsRequired = false)]
-        public string Number { get; set; }
+        public int? Number { get; set; }
 
         [DataMember(Name = "state", IsRequired = false)]
         public string State { get; set; }

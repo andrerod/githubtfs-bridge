@@ -16,6 +16,6 @@ namespace GithubClient.Model
 {
     public interface IGithubEntity
     {
-        public string Id { get; set; }
+        string Id { get; set; }
     }
 }
