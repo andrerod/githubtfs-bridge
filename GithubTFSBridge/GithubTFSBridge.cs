@@ -82,9 +82,7 @@ namespace ConsoleApplication1
             var tfs = TfsTeamProjectCollectionFactory.GetTeamProjectCollection(new Uri(TfsServerAddress));
             var wiStore = tfs.GetService<WorkItemStore>();
 
-            var project = wiStore.Projects.Cast<Project>().FirstOrDefault(p =>
-                p.Name.Equals("RD", StringComparison.InvariantCultureIgnoreCase));
-
+            Project project = wiStore.Projects["RD"];
             QueryFolder queryFolder = project.QueryHierarchy;
             var parts = path.Split('/');
             for (int part = 0; part < parts.Length - 1; part++)
@@ -113,10 +111,18 @@ namespace ConsoleApplication1
 
             if (githubIssue == null)
             {
-                GithubChannel.CreateIssue(GithubOwner, GithubRepository, githubIssueRequest);
+                githubIssue = GithubChannel.CreateIssue(GithubOwner, GithubRepository, githubIssueRequest);
 
-                // TODO: implement comments
-                // var actionHistory = workItem.GetActionsHistory();
+                var historyComments = workItem.Revisions.Cast<Revision>().Where(
+                        w => !string.IsNullOrEmpty(w.Fields["history"].Value as string));
+
+                foreach (Revision commentWorkedItem in historyComments)
+                {
+                    GithubChannel.CreateComment(GithubOwner, GithubRepository, githubIssue.Number.ToString(), new GithubComment
+                    {
+                        Body = string.Format("[{0} - {1}]: {2}", commentWorkedItem.WorkItem.ChangedDate, commentWorkedItem.WorkItem.ChangedBy, commentWorkedItem.Fields["history"])
+                    });
+                }
             }
             else
             {
@@ -132,7 +138,21 @@ namespace ConsoleApplication1
 
         private WorkItem CreateOrUpdateWorkItem(IList<WorkItem> workItems, GithubIssue githubIssue)
         {
-            throw new NotImplementedException();
+            var tfs = TfsTeamProjectCollectionFactory.GetTeamProjectCollection(new Uri(TfsServerAddress));
+            var wiStore = tfs.GetService<WorkItemStore>();
+
+            Project teamProject = wiStore.Projects["RD"];
+            WorkItemType workItemType = teamProject.WorkItemTypes["RDBug"];
+
+            WorkItem workItem = new WorkItem(workItemType)
+            {
+                Title = githubIssue.Title,
+                Description = githubIssue.Body
+            };
+
+            workItem.Save();
+
+            return workItem;
         }
 
         private string GetGithubUserAssignedTo(WorkItem workItem)
@@ -179,7 +199,7 @@ namespace ConsoleApplication1
             var iterationPath = GetFieldValue(workItem, "Iteration Path");
             var iterationParts = iterationPath.Split('\\');
             var iterationName = iterationParts[iterationParts.Length - 1];
-            return (int)GetGithubMilestone(iterationName).Number;
+            return (int) GetGithubMilestone(iterationName).Number;
         }
 
         private string GetGithubIssueState(WorkItem workItem)
@@ -209,7 +229,7 @@ namespace ConsoleApplication1
             var labels = GithubChannel.GetLabels(GithubOwner, GithubRepository);
 
             return new List<string>(new[] {
-                // CreateOrUpdateLabel(labels, workItem.Type.Name, WorkItemTypeColor),
+                // CreateOrUpdateLabel(labels, workItem.Type.Name, WorkItemTypeColor), // Work Item Type
                 CreateOrUpdateLabel(labels, GetFieldValue(workItem, "priority"), WorkItemPriorityColor),
                 CreateOrUpdateLabel(labels, GetFieldValue(workItem, "issue type"), WorkItemIssueTypeColor)
             });
