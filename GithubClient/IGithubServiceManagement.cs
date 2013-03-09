@@ -246,19 +246,19 @@ namespace GithubClient
         [Description("Create a comment")]
         [OperationContract(AsyncPattern = true)]
         [WebInvoke(Method = "POST", UriTemplate = "/repos/{owner}/{repo}/issues/{number}/comments", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
-        IAsyncResult BeginCreateComment(string owner, string repo, string id, GithubComment comment, AsyncCallback callback, object state);
+        IAsyncResult BeginCreateComment(string owner, string repo, string number, GithubComment comment, AsyncCallback callback, object state);
         GithubComment EndCreateComment(IAsyncResult asyncResult);
 
         [Description("Edit a comment")]
         [OperationContract(AsyncPattern = true)]
         [WebInvoke(Method = "PATCH", UriTemplate = "/repos/{owner}/{repo}/issues/{number}/comments", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
-        IAsyncResult BeginUpdateComment(string owner, string repo, string id, GithubComment comment, AsyncCallback callback, object state);
+        IAsyncResult BeginUpdateComment(string owner, string repo, string number, GithubComment comment, AsyncCallback callback, object state);
         GithubComment EndUpdateComment(IAsyncResult asyncResult);
 
         [Description("Delete a comment")]
         [OperationContract(AsyncPattern = true)]
         [WebInvoke(Method = "DELETE", UriTemplate = "/repos/{owner}/{repo}/issues/{number}/comments", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
-        IAsyncResult BeginDeleteComment(string owner, string repo, string id, AsyncCallback callback, object state);
+        IAsyncResult BeginDeleteComment(string owner, string repo, string number, AsyncCallback callback, object state);
         void EndDeleteComment(IAsyncResult asyncResult);
 
         [Description("List events for an issue")]

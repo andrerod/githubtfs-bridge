@@ -34,19 +34,19 @@ namespace GithubClient
             return proxy.EndGetCommentFromIssue(proxy.BeginGetCommentFromIssue(owner, repo, id, null, null));
         }
 
-        public static GithubComment CreateComment(this IGithubServiceManagement proxy, string owner, string repo, string id, GithubComment comment)
+        public static GithubComment CreateComment(this IGithubServiceManagement proxy, string owner, string repo, string number, GithubComment comment)
         {
-            return proxy.EndCreateComment(proxy.BeginCreateComment(owner, repo, id, comment, null, null));
+            return proxy.EndCreateComment(proxy.BeginCreateComment(owner, repo, number, comment, null, null));
         }
 
-        public static GithubComment BeginUpdateComment(this IGithubServiceManagement proxy, string owner, string repo, string id, GithubComment comment)
+        public static GithubComment BeginUpdateComment(this IGithubServiceManagement proxy, string owner, string repo, string number, GithubComment comment)
         {
-            return proxy.EndUpdateComment(proxy.BeginUpdateComment(owner, repo, id, comment, null, null));
+            return proxy.EndUpdateComment(proxy.BeginUpdateComment(owner, repo, number, comment, null, null));
         }
 
-        public static void DeleteComment(this IGithubServiceManagement proxy, string owner, string repo, string id)
+        public static void DeleteComment(this IGithubServiceManagement proxy, string owner, string repo, string number)
         {
-            proxy.EndDeleteComment(proxy.BeginDeleteComment(owner, repo, id, null, null));
+            proxy.EndDeleteComment(proxy.BeginDeleteComment(owner, repo, number, null, null));
         }
     }
 }
