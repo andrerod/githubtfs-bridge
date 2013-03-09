@@ -30,9 +30,9 @@ namespace ConsoleApplication1
         private string TfsServerAddress { get; set; }
         private string TfsPath { get; set; }
 
-        private const string WorkItemTypeColor = "0000FF";
+        private const string WorkItemTypeColor = "00FF00";
         private const string WorkItemPriorityColor = "FF0000";
-        private const string WorkItemIssueTypeColor = "00FF00";
+        private const string WorkItemIssueTypeColor = "0000FF";
 
         private IDictionary<string, GithubUser> GithubUsers { get; set; }
         private IDictionary<string, GithubMilestone> GithubMilestones { get; set; } 
@@ -50,10 +50,16 @@ namespace ConsoleApplication1
             GithubMilestones = new Dictionary<string, GithubMilestone>();
         }
 
+        // Area Path
+        // "RD\\Azure App Plat\\Azure UX\\Experiences\\Kudu"
+
+        // Iteration Path
+        // RD\Azure App Plat\Azure UX\AUX Portal\Future
+
         public void Synchronize()
         {
             // Get All Team Projects
-            WorkItemCollection workItems = GetWorkItems("Shared Queries/Kudu/Portal - Kudu Future");
+            IList<WorkItem> workItems = new List<WorkItem>(GetWorkItems("Shared Queries/Kudu/Portal - Kudu Future").Cast<WorkItem>());
             IList<GithubIssue> githubIssues = GithubChannel.GetIssuesFromRepo(GithubOwner, GithubRepository);
             
             // Create new github issues from work items
@@ -62,17 +68,13 @@ namespace ConsoleApplication1
                 githubIssues.Add(CreateOrUpdateGithubIssue(githubIssues, workItem));
             }
             
-            // Area Path
-            // "RD\\Azure App Plat\\Azure UX\\Experiences\\Kudu"
+            // Create new work items from git issues
+            foreach (GithubIssue githubIssue in githubIssues)
+            {
+                workItems.Add(CreateOrUpdateWorkItem(workItems, githubIssue));
+            }
 
-            // Iteration Path
-            // RD\Azure App Plat\Azure UX\AUX Portal\Future
-
-            // TODO: Create new workitems from github issues
-
-            // TODO: Remove github issues that don't exist in workitems
-
-            // TODO: Remove workItems that don't exist in github issues
+            // TODO: what about deleted items ??
         }
 
         private WorkItemCollection GetWorkItems(string path)
@@ -113,18 +115,24 @@ namespace ConsoleApplication1
             {
                 GithubChannel.CreateIssue(GithubOwner, GithubRepository, githubIssueRequest);
 
+                // TODO: implement comments
                 // var actionHistory = workItem.GetActionsHistory();
             }
             else
             {
                 GithubChannel.UpdateIssue(GithubOwner, GithubRepository, githubIssue.Number.ToString(), githubIssueRequest);
 
+                // TODO: implement comments
                 // Create or update issue comments
                 // var comments = GithubChannel.GetCommentFromIssue(GithubOwner, GithubRepository, githubIssue.Number.ToString());                
             }
 
-
             return githubIssueRequest;
+        }
+
+        private WorkItem CreateOrUpdateWorkItem(IList<WorkItem> workItems, GithubIssue githubIssue)
+        {
+            throw new NotImplementedException();
         }
 
         private string GetGithubUserAssignedTo(WorkItem workItem)
@@ -201,7 +209,7 @@ namespace ConsoleApplication1
             var labels = GithubChannel.GetLabels(GithubOwner, GithubRepository);
 
             return new List<string>(new[] {
-                CreateOrUpdateLabel(labels, workItem.Type.Name, WorkItemTypeColor),
+                // CreateOrUpdateLabel(labels, workItem.Type.Name, WorkItemTypeColor),
                 CreateOrUpdateLabel(labels, GetFieldValue(workItem, "priority"), WorkItemPriorityColor),
                 CreateOrUpdateLabel(labels, GetFieldValue(workItem, "issue type"), WorkItemIssueTypeColor)
             });
