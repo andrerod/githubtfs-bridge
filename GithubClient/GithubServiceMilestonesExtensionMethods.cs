@@ -19,22 +19,22 @@ namespace GithubClient
 {
     public static class GithubServiceMilestonesExtensionMethods
     {
-        public static IList<GithubMilestoneResponse> GetMilestonesFromRepo(this IGithubServiceManagement proxy, string owner, string repo)
+        public static IList<GithubMilestone> GetMilestonesFromRepo(this IGithubServiceManagement proxy, string owner, string repo)
         {
             return proxy.EndGetMilestonesFromRepo(proxy.BeginGetMilestonesFromRepo(owner, repo, null, null));
         }
 
-        public static GithubMilestoneResponse GetMilestoneFromRepo(this IGithubServiceManagement proxy, string owner, string repo, string number)
+        public static GithubMilestone GetMilestoneFromRepo(this IGithubServiceManagement proxy, string owner, string repo, string number)
         {
             return proxy.EndGetMilestoneFromRepo(proxy.BeginGetMilestoneFromRepo(owner, repo, number, null, null));
         }
 
-        public static GithubMilestoneResponse CreateMilestoneOnRepo(this IGithubServiceManagement proxy, string owner, string repo, GithubMilestone milestone)
+        public static GithubMilestone CreateMilestoneOnRepo(this IGithubServiceManagement proxy, string owner, string repo, GithubMilestone milestone)
         {
             return proxy.EndCreateMilestoneOnRepo(proxy.BeginCreateMilestoneOnRepo(owner, repo, milestone, null, null));
         }
 
-        public static GithubMilestoneResponse UpdateMilestoneOnRepo(this IGithubServiceManagement proxy, string owner, string repo, string number, GithubMilestone milestone)
+        public static GithubMilestone UpdateMilestoneOnRepo(this IGithubServiceManagement proxy, string owner, string repo, string number, GithubMilestone milestone)
         {
             return proxy.EndUpdateMilestoneOnRepo(proxy.BeginUpdateMilestoneOnRepo(owner, repo, number, milestone, null, null));
         }

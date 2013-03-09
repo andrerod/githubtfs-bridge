@@ -199,25 +199,25 @@ namespace GithubClient
         [OperationContract(AsyncPattern = true)]
         [WebInvoke(Method = "GET", UriTemplate = "/repos/{owner}/{repo}/milestones", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
         IAsyncResult BeginGetMilestonesFromRepo(string owner, string repo, AsyncCallback callback, object state);
-        IList<GithubMilestoneResponse> EndGetMilestonesFromRepo(IAsyncResult asyncResult);
+        IList<GithubMilestone> EndGetMilestonesFromRepo(IAsyncResult asyncResult);
 
         [Description("Get a single milestone")]
         [OperationContract(AsyncPattern = true)]
         [WebInvoke(Method = "GET", UriTemplate = "/repos/{owner}/{repo}/milestones/{number}", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
         IAsyncResult BeginGetMilestoneFromRepo(string owner, string repo, string number, AsyncCallback callback, object state);
-        GithubMilestoneResponse EndGetMilestoneFromRepo(IAsyncResult asyncResult);
+        GithubMilestone EndGetMilestoneFromRepo(IAsyncResult asyncResult);
 
         [Description("Create a milestone")]
         [OperationContract(AsyncPattern = true)]
         [WebInvoke(Method = "POST", UriTemplate = "/repos/{owner}/{repo}/milestones", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
         IAsyncResult BeginCreateMilestoneOnRepo(string owner, string repo, GithubMilestone milestone, AsyncCallback callback, object state);
-        GithubMilestoneResponse EndCreateMilestoneOnRepo(IAsyncResult asyncResult);
+        GithubMilestone EndCreateMilestoneOnRepo(IAsyncResult asyncResult);
 
         [Description("Update a milestone")]
         [OperationContract(AsyncPattern = true)]
         [WebInvoke(Method = "PATCH", UriTemplate = "/repos/{owner}/{repo}/milestones/{number}", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
         IAsyncResult BeginUpdateMilestoneOnRepo(string owner, string repo, string number, GithubMilestone milestone, AsyncCallback callback, object state);
-        GithubMilestoneResponse EndUpdateMilestoneOnRepo(IAsyncResult asyncResult);
+        GithubMilestone EndUpdateMilestoneOnRepo(IAsyncResult asyncResult);
         
         [Description("Delete a milestone")]
         [OperationContract(AsyncPattern = true)]

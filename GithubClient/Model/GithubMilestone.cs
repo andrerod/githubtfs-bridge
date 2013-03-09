@@ -22,39 +22,37 @@ namespace GithubClient.Model
         public static readonly string Closed = "closed";
     }
 
+    [DataContract]
     public class GithubMilestone
     {
-        [DataMember(Name = "state", IsRequired = false)]
-        public string State { get; set; }
-
-        [DataMember(Name = "title", IsRequired = false)]
+        [DataMember(Name = "title", IsRequired = false, EmitDefaultValue = false)]
         public string Title { get; set; }
 
-        [DataMember(Name = "description", IsRequired = false)]
+        [DataMember(Name = "state", IsRequired = false, EmitDefaultValue = false)]
+        public string State { get; set; }
+
+        [DataMember(Name = "description", IsRequired = false, EmitDefaultValue = false)]
         public string Description { get; set; }
 
-        [DataMember(Name = "due_on", IsRequired = false)]
+        [DataMember(Name = "due_on", IsRequired = false, EmitDefaultValue = false)]
         public string DueOn { get; set; }
-    }
 
-    public class GithubMilestoneResponse : GithubMilestone
-    {
-        [DataMember(Name = "url", IsRequired = false)]
+        [DataMember(Name = "url", IsRequired = false, EmitDefaultValue = false)]
         public string Url { get; set; }
 
-        [DataMember(Name = "number", IsRequired = false)]
+        [DataMember(Name = "number", IsRequired = false, EmitDefaultValue = false)]
         public int? Number { get; set; }
 
-        [DataMember(Name = "creator", IsRequired = false)]
+        [DataMember(Name = "creator", IsRequired = false, EmitDefaultValue = false)]
         public GithubUser Creator { get; set; }
 
-        [DataMember(Name = "open_issues", IsRequired = false)]
+        [DataMember(Name = "open_issues", IsRequired = false, EmitDefaultValue = false)]
         public int? OpenIssues { get; set; }
 
-        [DataMember(Name = "closed_issues", IsRequired = false)]
+        [DataMember(Name = "closed_issues", IsRequired = false, EmitDefaultValue = false)]
         public int? ClosedIssues { get; set; }
 
-        [DataMember(Name = "created_at", IsRequired = false)]
+        [DataMember(Name = "created_at", IsRequired = false, EmitDefaultValue = false)]
         public string CreatedAt { get; set; }
     }
 }

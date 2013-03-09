@@ -32,9 +32,10 @@ namespace ConsoleApplication1
 
         private const string WorkItemTypeColor = "0000FF";
         private const string WorkItemPriorityColor = "FF0000";
+        private const string WorkItemIssueTypeColor = "00FF00";
 
         private IDictionary<string, GithubUser> GithubUsers { get; set; }
-        private IDictionary<string, GithubMilestoneResponse> GithubMilestones { get; set; } 
+        private IDictionary<string, GithubMilestone> GithubMilestones { get; set; } 
 
         public GithubTFSBridge (string githubUsername, string githubPassword, string githubOwner, string githubRepository, string tfsServerAddress, string tfsPath)
         {
@@ -46,7 +47,7 @@ namespace ConsoleApplication1
             GithubChannel = GithubClient.GithubClient.CreateChannel(githubUsername, githubPassword);
 
             GithubUsers = new Dictionary<string, GithubUser>();
-            GithubMilestones = new Dictionary<string, GithubMilestoneResponse>();
+            GithubMilestones = new Dictionary<string, GithubMilestone>();
         }
 
         public void Synchronize()
@@ -112,14 +113,14 @@ namespace ConsoleApplication1
             {
                 GithubChannel.CreateIssue(GithubOwner, GithubRepository, githubIssueRequest);
 
-                var actionHistory = workItem.GetActionsHistory();
+                // var actionHistory = workItem.GetActionsHistory();
             }
             else
             {
                 GithubChannel.UpdateIssue(GithubOwner, GithubRepository, githubIssue.Number.ToString(), githubIssueRequest);
 
                 // Create or update issue comments
-                var comments = GithubChannel.GetCommentFromIssue(GithubOwner, GithubRepository, githubIssue.Number.ToString());                
+                // var comments = GithubChannel.GetCommentFromIssue(GithubOwner, GithubRepository, githubIssue.Number.ToString());                
             }
 
 
@@ -201,7 +202,8 @@ namespace ConsoleApplication1
 
             return new List<string>(new[] {
                 CreateOrUpdateLabel(labels, workItem.Type.Name, WorkItemTypeColor),
-                CreateOrUpdateLabel(labels, GetFieldValue(workItem, "priority"), WorkItemPriorityColor)
+                CreateOrUpdateLabel(labels, GetFieldValue(workItem, "priority"), WorkItemPriorityColor),
+                CreateOrUpdateLabel(labels, GetFieldValue(workItem, "issue type"), WorkItemIssueTypeColor)
             });
         }
 
@@ -218,11 +220,11 @@ namespace ConsoleApplication1
             return githubUser;
         }
 
-        private GithubMilestoneResponse GetGithubMilestone(string title)
+        private GithubMilestone GetGithubMilestone(string title)
         {
-            if (GithubMilestones == null)
+            if (GithubMilestones == null || !GithubMilestones.ContainsKey(title))
             {
-                GithubMilestones = GithubChannel.GetMilestonesFromRepo(GithubOwner, GithubRepository).ToDictionary(m => m.Description, m => m);    
+                GithubMilestones = GithubChannel.GetMilestonesFromRepo(GithubOwner, GithubRepository).ToDictionary(m => m.Title, m => m);    
             }
 
             if (GithubMilestones.ContainsKey(title))
