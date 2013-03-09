@@ -290,5 +290,11 @@ namespace GithubClient
         [WebInvoke(Method = "GET", UriTemplate = "/repos/{owner}/{repo}/collaborators", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
         IAsyncResult BeginGetCollaboratorsFromRepo(string owner, string repo, AsyncCallback callback, object state);
         IList<GithubUser> EndGetCollaboratorsFromRepo(IAsyncResult asyncResult);
+
+        [Description("Get a single user")]
+        [OperationContract(AsyncPattern = true)]
+        [WebInvoke(Method = "GET", UriTemplate = "/users/{user}", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
+        IAsyncResult BeginGetUser(string user, AsyncCallback callback, object state);
+        GithubUser EndGetUser(IAsyncResult asyncResult);
     }
 }

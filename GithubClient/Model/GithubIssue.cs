@@ -72,7 +72,7 @@ namespace GithubClient.Model
 
         public int CompareTo(object obj)
         {
-            return Number - ((GithubIssueResponse)obj).Number;
+            return (int)Number - (int)((GithubIssueResponse)obj).Number;
         }
     }
 

@@ -54,6 +54,7 @@
     <Compile Include="GithubServiceIssuesExtensionMethods.cs" />
     <Compile Include="GithubServiceLabelsExtensionMethods.cs" />
     <Compile Include="GithubServiceMilestonesExtensionMethods.cs" />
+    <Compile Include="GithubServiceUsersExtensionMethods.cs" />
     <Compile Include="IGithubServiceManagement.cs" />
     <Compile Include="Model\GithubAuthorization.cs" />
     <Compile Include="Model\GithubAuthorizationRequest.cs" />
@@ -67,6 +68,7 @@
     <Compile Include="Model\GithubRepository.cs" />
     <Compile Include="Model\GithubRepositoryHook.cs" />
     <Compile Include="Model\GithubUser.cs" />
+    <Compile Include="Model\IGithubEntity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -57,8 +57,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GithubTFSBridge.cs" />
+    <Compile Include="Repositories\IRepository.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\Repository.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GithubClient\GithubClient.csproj">

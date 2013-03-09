@@ -33,6 +33,8 @@ namespace ConsoleApplication1
         private const string WorkItemTypeColor = "0000FF";
         private const string WorkItemPriorityColor = "FF0000";
 
+        private IDictionary<string, GithubUser> GithubUsers { get; set; } 
+
         public GithubTFSBridge (string githubUsername, string githubPassword, string githubOwner, string githubRepository, string tfsServerAddress, string tfsPath)
         {
             GithubOwner = githubOwner;
@@ -41,6 +43,8 @@ namespace ConsoleApplication1
             TfsPath = tfsPath;
 
             GithubChannel = GithubClient.GithubClient.CreateChannel(githubUsername, githubPassword);
+
+            GithubUsers = new Dictionary<string, GithubUser>();
         }
 
         public void Synchronize()
@@ -54,6 +58,12 @@ namespace ConsoleApplication1
             {
                 githubIssues.Add(CreateOrUpdateGithubIssue(githubIssues, workItem));
             }
+            
+            // Area Path
+            // "RD\\Azure App Plat\\Azure UX\\Experiences\\Kudu"
+
+            // Iteration Path
+            // RD\Azure App Plat\Azure UX\AUX Portal\Future
 
             // TODO: Create new workitems from github issues
 
@@ -83,10 +93,8 @@ namespace ConsoleApplication1
 
         private GithubIssue CreateOrUpdateGithubIssue(IList<GithubIssue> githubIssues, WorkItem workItem)
         {
-            // Create or update issue
-            GithubIssue githubIssue = githubIssues.FirstOrDefault(i => i.Title.Equals(workItem.Title));
-
             // TODO: for now this is matching by title. Move to match by github id that is in TFS DB
+            GithubIssue githubIssue = githubIssues.FirstOrDefault(i => i.Title.Equals(workItem.Title));
 
             GithubIssueRequest githubIssueRequest = new GithubIssueRequest
             {
@@ -94,14 +102,15 @@ namespace ConsoleApplication1
                 State = GetGithubIssueState(workItem),
                 Body = workItem.Description,
                 Labels = GetGithubLabels(workItem),
-                Assignee = GetGithubUserAssignedTo(workItem).Login
+                Assignee = GetGithubUserAssignedTo(workItem),
+                Milestone = CreateOrUpdateMilestone(workItem)
             };
 
             if (githubIssue == null)
             {
                 GithubChannel.CreateIssue(GithubOwner, GithubRepository, githubIssueRequest);
 
-
+                var actionHistory = workItem.GetActionsHistory();
             }
             else
             {
@@ -115,11 +124,34 @@ namespace ConsoleApplication1
             return githubIssueRequest;
         }
 
-        private GithubUser GetGithubUserAssignedTo(WorkItem workItem)
+        private string GetGithubUserAssignedTo(WorkItem workItem)
         {
             var assignedTo = GetFieldValue(workItem, "assigned to");
             var collaborators = GithubChannel.GetCollaboratorsFromRepo(GithubOwner, GithubRepository);
-            return collaborators.FirstOrDefault(u => u.Name.Equals(assignedTo, StringComparison.InvariantCultureIgnoreCase));
+            var user = collaborators.FirstOrDefault(u =>
+            {
+                GithubUser githubUser = GetGithubUser(u.Login);
+                if (string.IsNullOrEmpty(githubUser.Name))
+                {
+                    return false;
+                }
+
+                return githubUser.Name.Equals(assignedTo, StringComparison.InvariantCultureIgnoreCase);
+            });
+
+            return user != null ? user.Login : null;
+        }
+
+        private GithubUser GetGithubUser(string userLogin)
+        {
+            if (GithubUsers.ContainsKey(userLogin))
+            {
+                return GithubUsers[userLogin];
+            }
+
+            GithubUser githubUser = GithubChannel.GetUser(userLogin);
+            GithubUsers[userLogin] = githubUser;
+            return githubUser;
         }
 
         private string CreateOrUpdateLabel(IEnumerable<GithubLabel> labels, string name, string color)
@@ -140,6 +172,18 @@ namespace ConsoleApplication1
             }
 
             return name;
+        }
+
+        private string CreateOrUpdateMilestone(WorkItem workItem)
+        {
+            // Iteration Path
+            var iterationPath = GetFieldValue(workItem, "Iteration Path");
+            var iterationParts = iterationPath.Split('\\');
+            var iterationName = iterationParts[iterationParts.Length - 1];
+
+            IList<GithubMilestone> milestones = GithubChannel.GetMilestonesFromRepo(GithubOwner, GithubRepository);
+            GithubMilestone gihubMilestone = 
+            return iterationName;
         }
 
         private string GetGithubIssueState(WorkItem workItem)
