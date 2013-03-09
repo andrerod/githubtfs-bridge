@@ -33,5 +33,47 @@ namespace GithubClient.Model
 
         [DataMember(Name = "url", IsRequired = false)]
         public string Url { get; set; }
+
+        [DataMember(Name = "name", IsRequired = false)]
+        public string Name { get; set; }
+
+        [DataMember(Name = "company", IsRequired = false)]
+        public string Company { get; set; }
+
+        [DataMember(Name = "blog", IsRequired = false)]
+        public string Blog { get; set; }
+
+        [DataMember(Name = "location", IsRequired = false)]
+        public string Location { get; set; }
+
+        [DataMember(Name = "email", IsRequired = false)]
+        public string Email { get; set; }
+
+        [DataMember(Name = "hireable", IsRequired = false)]
+        public string Hireable { get; set; }
+
+        [DataMember(Name = "bio", IsRequired = false)]
+        public string Bio { get; set; }
+
+        [DataMember(Name = "public_repos", IsRequired = false)]
+        public int PublicRepos { get; set; }
+
+        [DataMember(Name = "public_gists", IsRequired = false)]
+        public int PublicGists { get; set; }
+
+        [DataMember(Name = "followers", IsRequired = false)]
+        public string Followers { get; set; }
+
+        [DataMember(Name = "following", IsRequired = false)]
+        public string Following { get; set; }
+
+        [DataMember(Name = "html_url", IsRequired = false)]
+        public string HtmlUrl { get; set; }
+
+        [DataMember(Name = "created_at", IsRequired = false)]
+        public string CreatedAt { get; set; }
+
+        [DataMember(Name = "type", IsRequired = false)]
+        public string Type { get; set; }
     }
 }

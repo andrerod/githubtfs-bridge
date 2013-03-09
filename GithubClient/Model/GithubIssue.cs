@@ -19,7 +19,20 @@ using System.Runtime.Serialization;
 namespace GithubClient.Model
 {
     [DataContract]
-    public class GithubIssue : IComparable
+    public class GithubIssue
+    {
+        [DataMember(Name = "state", IsRequired = true)]
+        public string State { get; set; }
+
+        [DataMember(Name = "title", IsRequired = true)]
+        public string Title { get; set; }
+
+        [DataMember(Name = "body", IsRequired = true)]
+        public string Body { get; set; }
+    }
+
+    [DataContract]
+    public class GithubIssueResponse : GithubIssue, IComparable
     {
         [DataMember(Name = "url", IsRequired = false)]
         public string Url { get; set; }
@@ -29,15 +42,6 @@ namespace GithubClient.Model
 
         [DataMember(Name = "number", IsRequired = false)]
         public int Number { get; set; }
-
-        [DataMember(Name = "state", IsRequired = false)]
-        public string State { get; set; }
-
-        [DataMember(Name = "title", IsRequired = true)]
-        public string Title { get; set; }
-
-        [DataMember(Name = "body", IsRequired = true)]
-        public string Body { get; set; }
 
         [DataMember(Name = "user", IsRequired = false)]
         public GithubUser User { get; set; }
@@ -68,22 +72,13 @@ namespace GithubClient.Model
 
         public int CompareTo(object obj)
         {
-            return Number - ((GithubIssue)obj).Number;
+            return Number - ((GithubIssueResponse)obj).Number;
         }
     }
 
     [DataContract]
-    public class GithubIssueRequest
+    public class GithubIssueRequest : GithubIssue
     {
-        [DataMember(Name = "state", IsRequired = true)]
-        public string State { get; set; }
-        
-        [DataMember(Name = "title", IsRequired = true)]
-        public string Title { get; set; }
-
-        [DataMember(Name = "body", IsRequired = true)]
-        public string Body { get; set; }
-
         [DataMember(Name = "labels", IsRequired = false)]
         public IList<string> Labels { get; set; }
 

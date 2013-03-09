@@ -284,5 +284,11 @@ namespace GithubClient
         [WebInvoke(Method = "GET", UriTemplate = "/repos/{owner}/{repo}/assignees", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
         IAsyncResult BeginGetAssignees(string owner, string repo, AsyncCallback callback, object state);
         IList<GithubUser> EndGetAssignees(IAsyncResult asyncResult);
+
+        [Description("List repository collaboratos")]
+        [OperationContract(AsyncPattern = true)]
+        [WebInvoke(Method = "GET", UriTemplate = "/repos/{owner}/{repo}/collaborators", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
+        IAsyncResult BeginGetCollaboratorsFromRepo(string owner, string repo, AsyncCallback callback, object state);
+        IList<GithubUser> EndGetCollaboratorsFromRepo(IAsyncResult asyncResult);
     }
 }

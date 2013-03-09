@@ -47,10 +47,19 @@ namespace ConsoleApplication1
         {
             // Get All Team Projects
             WorkItemCollection workItems = GetWorkItems("Shared Queries/Kudu/Portal - Kudu Future");
+            IList<GithubIssue> githubIssues = GithubChannel.GetIssuesFromRepo(GithubOwner, GithubRepository);
+            
+            // Create new github issues from work items
             foreach (WorkItem workItem in workItems)
             {
-                CreateOrUpdateGithubIssue(workItem);
-            } 
+                githubIssues.Add(CreateOrUpdateGithubIssue(githubIssues, workItem));
+            }
+
+            // TODO: Create new workitems from github issues
+
+            // TODO: Remove github issues that don't exist in workitems
+
+            // TODO: Remove workItems that don't exist in github issues
         }
 
         private WorkItemCollection GetWorkItems(string path)
@@ -72,19 +81,27 @@ namespace ConsoleApplication1
             return wiStore.Query(query.QueryText.Replace("@project", "'" + query.Project.Name + "'"));
         }
 
-        private void CreateOrUpdateGithubIssue(WorkItem workItem)
+        private GithubIssueRequest CreateOrUpdateGithubIssue(IList<GithubIssue> githubIssues, WorkItem workItem)
         {
             GithubIssueRequest githubIssue = new GithubIssueRequest
             {
                 Title = workItem.Title,
                 State = GetGithubIssueState(workItem),
                 Body = workItem.Description,
-                Labels = GetGithubLabels(workItem)
+                Labels = GetGithubLabels(workItem),
+                Assignee = GetGithubUserAssignedTo(workItem).Login
             };
 
-            var assignedTo = GetFieldValue(workItem, "assigned to");
-
             GithubChannel.CreateIssue(GithubOwner, GithubRepository, githubIssue);
+
+            return githubIssue;
+        }
+
+        private GithubUser GetGithubUserAssignedTo(WorkItem workItem)
+        {
+            var assignedTo = GetFieldValue(workItem, "assigned to");
+            var collaborators = GithubChannel.GetCollaboratorsFromRepo(GithubOwner, GithubRepository);
+            return collaborators.FirstOrDefault(u => u.Name.Equals(assignedTo, StringComparison.InvariantCultureIgnoreCase));
         }
 
         private string CreateOrUpdateLabel(IEnumerable<GithubLabel> labels, string name, string color)

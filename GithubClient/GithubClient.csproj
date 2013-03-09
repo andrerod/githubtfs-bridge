@@ -47,6 +47,7 @@
     <Compile Include="GithubAuthHeaderInserter.cs" />
     <Compile Include="GithubClient.cs" />
     <Compile Include="GithubServiceAssigneesExtensionMethods.cs" />
+    <Compile Include="GithubServiceCollaboratorsExtensionMethods.cs" />
     <Compile Include="GithubServiceCommentsExtensionMethods.cs" />
     <Compile Include="GithubServiceEventsExtensionMethods.cs" />
     <Compile Include="GithubServiceExtensionMethods.cs" />
