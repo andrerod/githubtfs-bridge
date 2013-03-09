@@ -16,14 +16,14 @@ using System.Runtime.Serialization;
 
 namespace GithubClient.Model
 {
+    public sealed class GithubMilestoneStates
+    {
+        public static readonly string Open = "open";
+        public static readonly string Closed = "closed";
+    }
+
     public class GithubMilestone
     {
-        [DataMember(Name = "url", IsRequired = false)]
-        public string Url { get; set; }
-
-        [DataMember(Name = "number", IsRequired = false)]
-        public int? Number { get; set; }
-
         [DataMember(Name = "state", IsRequired = false)]
         public string State { get; set; }
 
@@ -33,19 +33,28 @@ namespace GithubClient.Model
         [DataMember(Name = "description", IsRequired = false)]
         public string Description { get; set; }
 
+        [DataMember(Name = "due_on", IsRequired = false)]
+        public string DueOn { get; set; }
+    }
+
+    public class GithubMilestoneResponse : GithubMilestone
+    {
+        [DataMember(Name = "url", IsRequired = false)]
+        public string Url { get; set; }
+
+        [DataMember(Name = "number", IsRequired = false)]
+        public int? Number { get; set; }
+
         [DataMember(Name = "creator", IsRequired = false)]
         public GithubUser Creator { get; set; }
 
         [DataMember(Name = "open_issues", IsRequired = false)]
-        public int OpenIssues { get; set; }
+        public int? OpenIssues { get; set; }
 
         [DataMember(Name = "closed_issues", IsRequired = false)]
-        public int ClosedIssues { get; set; }
+        public int? ClosedIssues { get; set; }
 
         [DataMember(Name = "created_at", IsRequired = false)]
         public string CreatedAt { get; set; }
-
-        [DataMember(Name = "due_on", IsRequired = false)]
-        public string DueOn { get; set; }
     }
 }

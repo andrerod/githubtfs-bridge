@@ -34,7 +34,7 @@ namespace ConsoleApplication1
         private const string WorkItemPriorityColor = "FF0000";
 
         private IDictionary<string, GithubUser> GithubUsers { get; set; }
-        private IDictionary<string, GithubMilestone> GithubMilestones { get; set; } 
+        private IDictionary<string, GithubMilestoneResponse> GithubMilestones { get; set; } 
 
         public GithubTFSBridge (string githubUsername, string githubPassword, string githubOwner, string githubRepository, string tfsServerAddress, string tfsPath)
         {
@@ -46,7 +46,7 @@ namespace ConsoleApplication1
             GithubChannel = GithubClient.GithubClient.CreateChannel(githubUsername, githubPassword);
 
             GithubUsers = new Dictionary<string, GithubUser>();
-            GithubMilestones = new Dictionary<string, GithubMilestone>();
+            GithubMilestones = new Dictionary<string, GithubMilestoneResponse>();
         }
 
         public void Synchronize()
@@ -170,8 +170,6 @@ namespace ConsoleApplication1
             var iterationPath = GetFieldValue(workItem, "Iteration Path");
             var iterationParts = iterationPath.Split('\\');
             var iterationName = iterationParts[iterationParts.Length - 1];
-
-            IList<GithubMilestone> milestones = GithubChannel.GetMilestonesFromRepo(GithubOwner, GithubRepository);
             return (int)GetGithubMilestone(iterationName).Number;
         }
 
@@ -220,7 +218,7 @@ namespace ConsoleApplication1
             return githubUser;
         }
 
-        private GithubMilestone GetGithubMilestone(string title)
+        private GithubMilestoneResponse GetGithubMilestone(string title)
         {
             if (GithubMilestones == null)
             {
@@ -232,9 +230,10 @@ namespace ConsoleApplication1
                 return GithubMilestones[title];
             }
 
-            return GithubChannel.CreateMilestoneFromRepo(GithubOwner, GithubRepository, new GithubMilestone
+            return GithubChannel.CreateMilestoneOnRepo(GithubOwner, GithubRepository, new GithubMilestone
             {
-                Title = title
+                Title = title,
+                State = GithubMilestoneStates.Open
             });
         }
     }
