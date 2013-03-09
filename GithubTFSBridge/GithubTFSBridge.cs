@@ -32,7 +32,8 @@ namespace ConsoleApplication1
 
         private const string WorkItemTypeColor = "00FF00";
         private const string WorkItemPriorityColor = "FF0000";
-        private const string WorkItemIssueTypeColor = "0000FF";
+        private const string WorkItemIssueTypeColor = "DFDFDF";
+        private const string WorkItemWorkStatusColor = "0000FF";
 
         private IDictionary<string, GithubUser> GithubUsers { get; set; }
         private IDictionary<string, GithubMilestone> GithubMilestones { get; set; } 
@@ -73,8 +74,6 @@ namespace ConsoleApplication1
             {
                 workItems.Add(CreateOrUpdateWorkItem(workItems, githubIssue));
             }
-
-            // TODO: what about deleted items ??
         }
 
         private WorkItemCollection GetWorkItems(string path)
@@ -160,8 +159,18 @@ namespace ConsoleApplication1
             WorkItem workItem = new WorkItem(workItemType)
             {
                 Title = githubIssue.Title,
-                Description = githubIssue.Body
+                Description = githubIssue.Body,
+                State = GetWorkItemState(githubIssue)
             };
+
+            /*
+                Title = workItem.Title,
+                State = GetGithubIssueState(workItem),
+                Body = workItem.Description,
+                Labels = GetGithubLabels(workItem),
+                Assignee = GetGithubUserAssignedTo(workItem),
+                Milestone = CreateOrUpdateMilestone(workItem)
+            */
 
             workItem.Save();
 
@@ -225,6 +234,16 @@ namespace ConsoleApplication1
             return "closed";
         }
 
+        private string GetWorkItemState(GithubIssue githubIssue)
+        {
+            if (githubIssue.State.Equals("open"))
+            {
+                return "Active";
+            }
+
+            return "Resolved";
+        }
+
         private string GetFieldValue(WorkItem workItem, string fieldName)
         {
             Field field = workItem.Fields.Cast<Field>().FirstOrDefault(
@@ -244,7 +263,8 @@ namespace ConsoleApplication1
             return new List<string>(new[] {
                 // CreateOrUpdateLabel(labels, workItem.Type.Name, WorkItemTypeColor), // Work Item Type
                 CreateOrUpdateLabel(labels, GetFieldValue(workItem, "priority"), WorkItemPriorityColor),
-                CreateOrUpdateLabel(labels, GetFieldValue(workItem, "issue type"), WorkItemIssueTypeColor)
+                CreateOrUpdateLabel(labels, GetFieldValue(workItem, "issue type"), WorkItemIssueTypeColor),
+                CreateOrUpdateLabel(labels, GetFieldValue(workItem, "work status"), WorkItemWorkStatusColor)
             });
         }
 
