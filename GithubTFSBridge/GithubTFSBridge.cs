@@ -81,9 +81,14 @@ namespace ConsoleApplication1
             return wiStore.Query(query.QueryText.Replace("@project", "'" + query.Project.Name + "'"));
         }
 
-        private GithubIssueRequest CreateOrUpdateGithubIssue(IList<GithubIssue> githubIssues, WorkItem workItem)
+        private GithubIssue CreateOrUpdateGithubIssue(IList<GithubIssue> githubIssues, WorkItem workItem)
         {
-            GithubIssueRequest githubIssue = new GithubIssueRequest
+            // Create or update issue
+            GithubIssue githubIssue = githubIssues.FirstOrDefault(i => i.Title.Equals(workItem.Title));
+
+            // TODO: for now this is matching by title. Move to match by github id that is in TFS DB
+
+            GithubIssueRequest githubIssueRequest = new GithubIssueRequest
             {
                 Title = workItem.Title,
                 State = GetGithubIssueState(workItem),
@@ -92,9 +97,22 @@ namespace ConsoleApplication1
                 Assignee = GetGithubUserAssignedTo(workItem).Login
             };
 
-            GithubChannel.CreateIssue(GithubOwner, GithubRepository, githubIssue);
+            if (githubIssue == null)
+            {
+                GithubChannel.CreateIssue(GithubOwner, GithubRepository, githubIssueRequest);
 
-            return githubIssue;
+
+            }
+            else
+            {
+                GithubChannel.UpdateIssue(GithubOwner, GithubRepository, githubIssue.Number.ToString(), githubIssueRequest);
+
+                // Create or update issue comments
+                var comments = GithubChannel.GetCommentFromIssue(GithubOwner, GithubRepository, githubIssue.Number.ToString());                
+            }
+
+
+            return githubIssueRequest;
         }
 
         private GithubUser GetGithubUserAssignedTo(WorkItem workItem)

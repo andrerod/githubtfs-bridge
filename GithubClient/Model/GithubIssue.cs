@@ -21,6 +21,9 @@ namespace GithubClient.Model
     [DataContract]
     public class GithubIssue
     {
+        [DataMember(Name = "number", IsRequired = false)]
+        public int? Number { get; set; }
+
         [DataMember(Name = "state", IsRequired = true)]
         public string State { get; set; }
 
@@ -39,9 +42,6 @@ namespace GithubClient.Model
 
         [DataMember(Name = "html_url", IsRequired = false)]
         public string HtmlUrl { get; set; }
-
-        [DataMember(Name = "number", IsRequired = false)]
-        public int Number { get; set; }
 
         [DataMember(Name = "user", IsRequired = false)]
         public GithubUser User { get; set; }

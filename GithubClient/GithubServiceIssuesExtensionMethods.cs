@@ -50,9 +50,9 @@ namespace GithubClient
             return proxy.EndCreateIssue(proxy.BeginCreateIssue(owner, repo, issue, null, null));
         }
 
-        public static GithubIssue UpdateIssue(this IGithubServiceManagement proxy, string owner, string repo, int number, GithubIssueRequest issue)
+        public static GithubIssue UpdateIssue(this IGithubServiceManagement proxy, string owner, string repo, string number, GithubIssueRequest issue)
         {
-            return proxy.EndUpdateIssue(proxy.BeginUpdateIssue(owner, repo, number.ToString(CultureInfo.InvariantCulture), issue, null, null));
+            return proxy.EndUpdateIssue(proxy.BeginUpdateIssue(owner, repo, number, issue, null, null));
         }
     }
 }
