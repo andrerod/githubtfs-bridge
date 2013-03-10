@@ -34,17 +34,20 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.TeamFoundation.Client, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\Microsoft.TeamFoundation.Client.11.0.51106.1\lib\Microsoft.TeamFoundation.Client.dll</HintPath>
+    <Reference Include="CloudTfsClientLibrary">
+      <HintPath>..\lib\CloudTfsClientLibrary.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.TeamFoundation.Common, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\Microsoft.TeamFoundation.Common.11.0.51106.1\lib\Microsoft.TeamFoundation.Common.dll</HintPath>
+    <Reference Include="MdsActiveClient">
+      <HintPath>..\lib\MdsActiveClient.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.TeamFoundation.WorkItemTracking.Client, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\Microsoft.TeamFoundation.WIT.Client.11.0.51106.1\lib\Microsoft.TeamFoundation.WorkItemTracking.Client.dll</HintPath>
+    <Reference Include="MdsCommon">
+      <HintPath>..\lib\MdsCommon.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel">
+      <HintPath>..\lib\Microsoft.IdentityModel.dll</HintPath>
+    </Reference>
+    <Reference Include="NodeDiagClient">
+      <HintPath>..\lib\NodeDiagClient.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -54,6 +57,9 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="Wintellect.Threading">
+      <HintPath>..\lib\Wintellect.Threading.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GithubTFSBridge.cs" />

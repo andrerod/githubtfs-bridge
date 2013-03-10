@@ -17,8 +17,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GithubClient;
 using GithubClient.Model;
-using Microsoft.TeamFoundation.Client;
-using Microsoft.TeamFoundation.WorkItemTracking.Client;
+using Microsoft.Cis.Monitoring.Mds.Tools.CloudTfsLibrary;
 
 namespace ConsoleApplication1
 {
@@ -59,6 +58,9 @@ namespace ConsoleApplication1
 
         public void Synchronize()
         {
+            CloudTfsClassHandler.InitializeCloudTfsHandler(TfsServerAddress, "CN=MdsRunerSvcAccess");
+            List<CloudTfsGenericWorkItem> workItems = CloudTfsClassHandler.SelectGenericWorkItem("Select * From WorkItems");
+            /*
             // Get All Team Projects
             IList<WorkItem> workItems = new List<WorkItem>(GetWorkItems("Shared Queries/Kudu/Portal - Kudu Future").Cast<WorkItem>());
             IList<GithubIssue> githubIssues = GithubChannel.GetIssuesFromRepo(GithubOwner, GithubRepository);
@@ -74,8 +76,10 @@ namespace ConsoleApplication1
             {
                 workItems.Add(CreateOrUpdateWorkItem(workItems, githubIssue));
             }
+             * */
         }
 
+        /*
         private WorkItemCollection GetWorkItems(string path)
         {
             var tfs = TfsTeamProjectCollectionFactory.GetTeamProjectCollection(new Uri(TfsServerAddress));
@@ -150,7 +154,7 @@ namespace ConsoleApplication1
 
         private WorkItem CreateOrUpdateWorkItem(IList<WorkItem> workItems, GithubIssue githubIssue)
         {
-            var tfs = TfsTeamProjectCollectionFactory.GetTeamProjectCollection(new Uri(TfsServerAddress));
+            var tfs = CloudTfsClassHandler.InitializeCloudTfsHandler(TfsServerAddress, "CN=MdsRunerSvcAccess");
             var wiStore = tfs.GetService<WorkItemStore>();
 
             Project teamProject = wiStore.Projects["RD"];
@@ -163,14 +167,13 @@ namespace ConsoleApplication1
                 State = GetWorkItemState(githubIssue)
             };
 
-            /*
-                Title = workItem.Title,
-                State = GetGithubIssueState(workItem),
-                Body = workItem.Description,
-                Labels = GetGithubLabels(workItem),
-                Assignee = GetGithubUserAssignedTo(workItem),
-                Milestone = CreateOrUpdateMilestone(workItem)
-            */
+//                Title = workItem.Title,
+//                State = GetGithubIssueState(workItem),
+//                Body = workItem.Description,
+//                Labels = GetGithubLabels(workItem),
+//                Assignee = GetGithubUserAssignedTo(workItem),
+//                Milestone = CreateOrUpdateMilestone(workItem)
+
 
             workItem.Save();
 
@@ -299,5 +302,6 @@ namespace ConsoleApplication1
                 State = GithubMilestoneStates.Open
             });
         }
+         * */
     }
 }
