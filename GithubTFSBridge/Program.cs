@@ -26,7 +26,8 @@ namespace ConsoleApplication1
                 ConfigurationManager.AppSettings["GithubPassword"],
                 "azuresdkci",
                 "testissuesrepo",
-                "http://vstfrd.dns.corp.microsoft.com:8080",
+                //"http://vstfrd.dns.corp.microsoft.com:8080",
+                "https://test1.diagnostics.monitoring.core.windows.net",
                 "Shared Queries/Kudu/Portal - Kudu Future");
 
             githubTfsBridge.Synchronize();
