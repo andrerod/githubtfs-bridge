@@ -12,10 +12,9 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
-using System;
 using System.Configuration;
 
-namespace ConsoleApplication1
+namespace GithubTFSBridge
 {
     public class Program
     {
@@ -24,14 +23,16 @@ namespace ConsoleApplication1
             GithubTFSBridge githubTfsBridge = new GithubTFSBridge(
                 ConfigurationManager.AppSettings["GithubUsername"],
                 ConfigurationManager.AppSettings["GithubPassword"],
-                "azuresdkci",
-                "testissuesrepo",
-                "http://vstfrd.dns.corp.microsoft.com:8080",
-                "Shared Queries/Kudu/Portal - Kudu Future");
+                ConfigurationManager.AppSettings["GithubOwner"],
+                ConfigurationManager.AppSettings["GithubRepository"],
+                ConfigurationManager.AppSettings["TfsUsername"],
+                ConfigurationManager.AppSettings["TfsPassword"],
+                ConfigurationManager.AppSettings["TfsDomain"],
+                ConfigurationManager.AppSettings["TfsAddress"],
+                ConfigurationManager.AppSettings["TfsProject"],
+                ConfigurationManager.AppSettings["TfsAreaPath"]);
 
             githubTfsBridge.Synchronize();
-            
-            Console.ReadLine();
         }
     }
 }

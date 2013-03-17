@@ -15,22 +15,26 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using GithubClient;
 using GithubClient.Model;
 using Microsoft.TeamFoundation.Client;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 
-namespace ConsoleApplication1
+namespace GithubTFSBridge
 {
     public class GithubTFSBridge
     {
         private IGithubServiceManagement GithubChannel { get; set; }
         private string GithubOwner { get; set; }
         private string GithubRepository { get; set; }
+        private string TfsUsername { get; set; }
+        private string TfsPassword { get; set; }
+        private string TfsDomain { get; set; }
         private string TfsServerAddress { get; set; }
+        private string TfsProjectName { get; set; }
         private string TfsPath { get; set; }
 
-        private const string WorkItemTypeColor = "00FF00";
         private const string WorkItemPriorityColor = "FF0000";
         private const string WorkItemIssueTypeColor = "DFDFDF";
         private const string WorkItemWorkStatusColor = "0000FF";
@@ -38,11 +42,24 @@ namespace ConsoleApplication1
         private IDictionary<string, GithubUser> GithubUsers { get; set; }
         private IDictionary<string, GithubMilestone> GithubMilestones { get; set; } 
 
-        public GithubTFSBridge (string githubUsername, string githubPassword, string githubOwner, string githubRepository, string tfsServerAddress, string tfsPath)
+        public GithubTFSBridge (string githubUsername,
+            string githubPassword,
+            string githubOwner,
+            string githubRepository,
+            string tfsUsername,
+            string tfsPassword,
+            string tfsDomain,
+            string tfsServerAddress,
+            string tfsProjectName,
+            string tfsPath)
         {
             GithubOwner = githubOwner;
             GithubRepository = githubRepository;
+            TfsUsername = tfsUsername;
+            TfsPassword = tfsPassword;
+            TfsDomain = tfsDomain;
             TfsServerAddress = tfsServerAddress;
+            TfsProjectName = tfsProjectName;
             TfsPath = tfsPath;
 
             GithubChannel = GithubClient.GithubClient.CreateChannel(githubUsername, githubPassword);
@@ -50,12 +67,6 @@ namespace ConsoleApplication1
             GithubUsers = new Dictionary<string, GithubUser>();
             GithubMilestones = new Dictionary<string, GithubMilestone>();
         }
-
-        // Area Path
-        // "RD\\Azure App Plat\\Azure UX\\Experiences\\Kudu"
-
-        // Iteration Path
-        // RD\Azure App Plat\Azure UX\AUX Portal\Future
 
         public void Synchronize()
         {
@@ -78,19 +89,13 @@ namespace ConsoleApplication1
 
         private WorkItemCollection GetWorkItems(string path)
         {
-            var tfs = TfsTeamProjectCollectionFactory.GetTeamProjectCollection(new Uri(TfsServerAddress));
+            var credentials = new NetworkCredential(TfsUsername, TfsPassword, TfsDomain);
+
+            var tfs = new TfsTeamProjectCollection(new Uri(TfsServerAddress), credentials);
+            tfs.EnsureAuthenticated();
             var wiStore = tfs.GetService<WorkItemStore>();
 
-            Project project = wiStore.Projects["RD"];
-            QueryFolder queryFolder = project.QueryHierarchy;
-            var parts = path.Split('/');
-            for (int part = 0; part < parts.Length - 1; part++)
-            {
-                queryFolder = queryFolder[parts[part]] as QueryFolder;
-            }
-
-            QueryDefinition query = (queryFolder[parts[parts.Length - 1]] as QueryDefinition);
-            return wiStore.Query(query.QueryText.Replace("@project", "'" + query.Project.Name + "'"));
+            return wiStore.Query("SELECT * FROM WorkItems WHERE [System.TeamProject] = @project".Replace("@project", "'" + TfsProjectName + "'"));
         }
 
         private GithubIssue CreateOrUpdateGithubIssue(IList<GithubIssue> githubIssues, WorkItem workItem)
@@ -261,10 +266,9 @@ namespace ConsoleApplication1
             var labels = GithubChannel.GetLabels(GithubOwner, GithubRepository);
 
             return new List<string>(new[] {
-                // CreateOrUpdateLabel(labels, workItem.Type.Name, WorkItemTypeColor), // Work Item Type
-                CreateOrUpdateLabel(labels, GetFieldValue(workItem, "priority"), WorkItemPriorityColor),
-                CreateOrUpdateLabel(labels, GetFieldValue(workItem, "issue type"), WorkItemIssueTypeColor),
-                CreateOrUpdateLabel(labels, GetFieldValue(workItem, "work status"), WorkItemWorkStatusColor)
+                CreateOrUpdateLabel(labels, "P" + GetFieldValue(workItem, "priority"), WorkItemPriorityColor),
+                CreateOrUpdateLabel(labels, GetFieldValue(workItem, "issue"), WorkItemIssueTypeColor),
+                CreateOrUpdateLabel(labels, GetFieldValue(workItem, "state"), WorkItemWorkStatusColor)
             });
         }
 
