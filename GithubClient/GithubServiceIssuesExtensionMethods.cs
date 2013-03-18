@@ -20,37 +20,54 @@ namespace GithubClient
 {
     public static class GithubServiceIssuesExtensionMethods
     {
-        public static List<GithubIssue> GetIssues(this IGithubServiceManagement proxy)
+        public static List<GithubIssueResponse> GetIssues(this IGithubServiceManagement proxy)
         {
             return proxy.EndGetIssues(proxy.BeginGetIssues(null, null));
         }
 
-        public static List<GithubIssue> GetIssuesFromUser(this IGithubServiceManagement proxy)
+        public static List<GithubIssueResponse> GetIssuesFromUser(this IGithubServiceManagement proxy)
         {
             return proxy.EndGetIssuesFromUser(proxy.BeginGetIssuesFromUser(null, null));
         }
 
-        public static List<GithubIssue> GetIssuesFromOrg(this IGithubServiceManagement proxy, string organization)
+        public static List<GithubIssueResponse> GetIssuesFromOrg(this IGithubServiceManagement proxy, string organization)
         {
             return proxy.EndGetIssuesFromOrg(proxy.BeginGetIssuesFromOrg(organization, null, null));
         }
 
-        public static List<GithubIssue> GetIssuesFromRepo(this IGithubServiceManagement proxy, string owner, string repo)
+        public static List<GithubIssueResponse> GetIssuesFromRepo(this IGithubServiceManagement proxy, string owner, string repo)
         {
-            return proxy.EndGetIssuesFromRepo(proxy.BeginGetIssuesFromRepo(owner, repo, null, null));
+            List<GithubIssueResponse> githubIssues = new List<GithubIssueResponse>();
+            for (var i = 1;; i++)
+            {
+                var results = proxy.GetIssuesFromRepoWithPage(owner, repo, i.ToString(CultureInfo.InvariantCulture));
+                if (results.Count == 0)
+                {
+                    break;
+                }
+
+                githubIssues.AddRange(results);
+            }
+
+            return githubIssues;
         }
 
-        public static GithubIssue GetIssue(this IGithubServiceManagement proxy, string owner, string repo, int number)
+        public static List<GithubIssueResponse> GetIssuesFromRepoWithPage(this IGithubServiceManagement proxy, string owner, string repo, string page)
+        {
+            return proxy.EndGetIssuesFromRepo(proxy.BeginGetIssuesFromRepo(owner, repo, page, null, null));
+        }
+
+        public static GithubIssueResponse GetIssue(this IGithubServiceManagement proxy, string owner, string repo, int number)
         {
             return proxy.EndGetIssue(proxy.BeginGetIssue(owner, repo, number.ToString(CultureInfo.InvariantCulture), null, null));
         }
 
-        public static GithubIssue CreateIssue(this IGithubServiceManagement proxy, string owner, string repo, GithubIssueRequest issue)
+        public static GithubIssueResponse CreateIssue(this IGithubServiceManagement proxy, string owner, string repo, GithubIssueRequest issue)
         {
             return proxy.EndCreateIssue(proxy.BeginCreateIssue(owner, repo, issue, null, null));
         }
 
-        public static GithubIssue UpdateIssue(this IGithubServiceManagement proxy, string owner, string repo, string number, GithubIssueRequest issue)
+        public static GithubIssueResponse UpdateIssue(this IGithubServiceManagement proxy, string owner, string repo, string number, GithubIssueRequest issue)
         {
             return proxy.EndUpdateIssue(proxy.BeginUpdateIssue(owner, repo, number, issue, null, null));
         }

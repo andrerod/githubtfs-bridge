@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.ServiceModel;
 using GithubClient;
 using GithubClient.Model;
 using Microsoft.TeamFoundation.Client;
@@ -33,6 +34,8 @@ namespace GithubTFSBridge
         private string TfsDomain { get; set; }
         private string TfsServerAddress { get; set; }
         private string TfsProjectName { get; set; }
+        private bool SyncGithub { get; set; }
+        private bool SyncTfs { get; set; }
         private string TfsPath { get; set; }
 
         private const string WorkItemPriorityColor = "FF0000";
@@ -51,7 +54,9 @@ namespace GithubTFSBridge
             string tfsDomain,
             string tfsServerAddress,
             string tfsProjectName,
-            string tfsPath)
+            string tfsPath,
+            bool syncGithub,
+            bool syncTfs)
         {
             GithubOwner = githubOwner;
             GithubRepository = githubRepository;
@@ -61,6 +66,8 @@ namespace GithubTFSBridge
             TfsServerAddress = tfsServerAddress;
             TfsProjectName = tfsProjectName;
             TfsPath = tfsPath;
+            SyncGithub = syncGithub;
+            SyncTfs = syncTfs;
 
             GithubChannel = GithubClient.GithubClient.CreateChannel(githubUsername, githubPassword);
 
@@ -72,18 +79,28 @@ namespace GithubTFSBridge
         {
             // Get All Team Projects
             IList<WorkItem> workItems = new List<WorkItem>(GetWorkItems("Shared Queries/Kudu/Portal - Kudu Future").Cast<WorkItem>());
-            IList<GithubIssue> githubIssues = GithubChannel.GetIssuesFromRepo(GithubOwner, GithubRepository);
-            
+            IList<GithubIssueResponse> githubIssues = GithubChannel.GetIssuesFromRepo(GithubOwner, GithubRepository);
+
             // Create new github issues from work items
-            foreach (WorkItem workItem in workItems)
+            if (SyncGithub)
             {
-                githubIssues.Add(CreateOrUpdateGithubIssue(githubIssues, workItem));
+                foreach (WorkItem workItem in workItems)
+                {
+                    githubIssues.Add(CreateOrUpdateGithubIssue(githubIssues, workItem));
+                }
             }
-            
-            // Create new work items from git issues
-            foreach (GithubIssue githubIssue in githubIssues)
+
+            if (SyncTfs)
             {
-                workItems.Add(CreateOrUpdateWorkItem(workItems, githubIssue));
+                // Create new work items from git issues
+                foreach (GithubIssueResponse githubIssue in githubIssues)
+                {
+                    var newWorkItem = CreateOrUpdateWorkItem(workItems, githubIssue);
+                    if (newWorkItem != null)
+                    {
+                        workItems.Add(newWorkItem);
+                    }
+                }
             }
         }
 
@@ -98,10 +115,10 @@ namespace GithubTFSBridge
             return wiStore.Query("SELECT * FROM WorkItems WHERE [System.TeamProject] = @project".Replace("@project", "'" + TfsProjectName + "'"));
         }
 
-        private GithubIssue CreateOrUpdateGithubIssue(IList<GithubIssue> githubIssues, WorkItem workItem)
+        private GithubIssueResponse CreateOrUpdateGithubIssue(IList<GithubIssueResponse> githubIssues, WorkItem workItem)
         {
             // TODO: for now this is matching by title. Move to match by github id that is in TFS DB
-            GithubIssue githubIssue = githubIssues.FirstOrDefault(i => i.Title.Equals(workItem.Title));
+            GithubIssueResponse githubIssue = githubIssues.FirstOrDefault(i => i.Title.Equals(workItem.Title));
 
             GithubIssueRequest githubIssueRequest = new GithubIssueRequest
             {
@@ -130,12 +147,16 @@ namespace GithubTFSBridge
             }
             else
             {
-                GithubChannel.UpdateIssue(GithubOwner, GithubRepository, githubIssue.Number.ToString(), githubIssueRequest);
+                if (DateTime.Parse(githubIssue.UpdatedAt) < workItem.ChangedDate)
+                {
+                    githubIssue = GithubChannel.UpdateIssue(GithubOwner, GithubRepository, githubIssue.Number.ToString(),
+                                                            githubIssueRequest);
+                }
 
                 var historyComments = workItem.Revisions.Cast<Revision>().Where(
                         w => !string.IsNullOrEmpty(w.Fields["history"].Value as string));
 
-                var comments = GithubChannel.GetCommentFromIssue(GithubOwner, GithubRepository, githubIssue.Number.ToString());
+                var comments = GithubChannel.GetCommentsFromIssue(GithubOwner, GithubRepository, githubIssue.Number.ToString());
                 // Add, added comments
                 foreach (Revision commentWorkedItem in historyComments)
                 {
@@ -150,36 +171,76 @@ namespace GithubTFSBridge
                 }
             }
 
-            return githubIssueRequest;
+            return githubIssue;
         }
 
-        private WorkItem CreateOrUpdateWorkItem(IList<WorkItem> workItems, GithubIssue githubIssue)
+        private WorkItem CreateOrUpdateWorkItem(IList<WorkItem> workItems, GithubIssueResponse githubIssue)
         {
-            var tfs = TfsTeamProjectCollectionFactory.GetTeamProjectCollection(new Uri(TfsServerAddress));
+            var credentials = new NetworkCredential(TfsUsername, TfsPassword, TfsDomain);
+
+            var tfs = new TfsTeamProjectCollection(new Uri(TfsServerAddress), credentials);
+            tfs.EnsureAuthenticated();
             var wiStore = tfs.GetService<WorkItemStore>();
 
-            Project teamProject = wiStore.Projects["RD"];
-            WorkItemType workItemType = teamProject.WorkItemTypes["RDBug"];
+            Project teamProject = wiStore.Projects[TfsProjectName];
 
-            WorkItem workItem = new WorkItem(workItemType)
+            WorkItem workItem = workItems.FirstOrDefault(wi => wi.Title.Equals(githubIssue.Title, StringComparison.InvariantCultureIgnoreCase));
+
+            var saveWorkItem = true;
+            var newWorkItem = false;
+            if (workItem != null)
             {
-                Title = githubIssue.Title,
-                Description = githubIssue.Body,
-                State = GetWorkItemState(githubIssue)
-            };
+                workItem.Open();
 
-            /*
-                Title = workItem.Title,
-                State = GetGithubIssueState(workItem),
-                Body = workItem.Description,
-                Labels = GetGithubLabels(workItem),
-                Assignee = GetGithubUserAssignedTo(workItem),
-                Milestone = CreateOrUpdateMilestone(workItem)
-            */
+                if (DateTime.Parse(githubIssue.UpdatedAt) < workItem.ChangedDate)
+                {
+                    saveWorkItem = false;
+                }
+            }
+            else
+            {
+                newWorkItem = true;
+                workItem = new WorkItem(teamProject.WorkItemTypes["Bug"]);
+            }
 
-            workItem.Save();
+            if (saveWorkItem)
+            {
+                workItem.Title = githubIssue.Title;
+                workItem.Description = githubIssue.Body;
+                workItem.State = GetWorkItemState(githubIssue);
 
-            return workItem;
+                if (githubIssue.Assignee != null && !string.IsNullOrEmpty(githubIssue.Assignee.Login))
+                {
+                    workItem.Fields["assigned to"].Value = githubIssue.Assignee.Login;
+                }
+                else
+                {
+                    workItem.Fields["assigned to"].Value = "Active";
+                }
+
+                workItem.Fields["issue"].Value = GetWorkItemValue(githubIssue, "issue") ?? "Code defect";
+
+                var priority = GetWorkItemValue(githubIssue, "priority");
+                if (!string.IsNullOrEmpty(priority))
+                {
+                    priority = priority.Substring(1);
+                    workItem.Fields["priority"].Value = priority;
+                }
+            }
+
+            // TODO: make sure there is a comment with link to github issue
+
+            if (saveWorkItem)
+            {
+                workItem.Save();
+            }
+
+            if (newWorkItem)
+            {
+                return workItem;
+            }
+
+            return null;
         }
 
         private string GetGithubUserAssignedTo(WorkItem workItem)
@@ -261,14 +322,42 @@ namespace GithubTFSBridge
             return null;
         }
 
+        private string GetWorkItemValue(GithubIssueResponse githubIssue, string name)
+        {
+            var color = GetLabelColor(name);
+            var label = githubIssue.Labels.FirstOrDefault(l => l.Color.Equals(color));
+            
+            if (label != null)
+            {
+                return label.Name;
+            }
+
+            return null;
+        }
+
+        private string GetLabelColor(string name)
+        {
+            switch (name)
+            {
+                case "priority":
+                    return WorkItemPriorityColor;
+                case "issue":
+                    return WorkItemIssueTypeColor;
+                case "state":
+                    return WorkItemWorkStatusColor;
+                default:
+                    throw new NotSupportedException();
+            }
+        }
+
         private IList<string> GetGithubLabels(WorkItem workItem)
         {
             var labels = GithubChannel.GetLabels(GithubOwner, GithubRepository);
 
             return new List<string>(new[] {
-                CreateOrUpdateLabel(labels, "P" + GetFieldValue(workItem, "priority"), WorkItemPriorityColor),
-                CreateOrUpdateLabel(labels, GetFieldValue(workItem, "issue"), WorkItemIssueTypeColor),
-                CreateOrUpdateLabel(labels, GetFieldValue(workItem, "state"), WorkItemWorkStatusColor)
+                CreateOrUpdateLabel(labels, GetFieldValue(workItem, "priority"), GetLabelColor("priority")),
+                CreateOrUpdateLabel(labels, GetFieldValue(workItem, "issue"), GetLabelColor("issue")),
+                CreateOrUpdateLabel(labels, GetFieldValue(workItem, "state"), GetLabelColor("state"))
             });
         }
 

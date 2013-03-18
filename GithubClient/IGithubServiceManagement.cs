@@ -91,43 +91,43 @@ namespace GithubClient
         [OperationContract(AsyncPattern = true)]
         [WebInvoke(Method = "GET", UriTemplate = "/issues", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
         IAsyncResult BeginGetIssues(AsyncCallback callback, object state);
-        List<GithubIssue> EndGetIssues(IAsyncResult asyncResult);
+        List<GithubIssueResponse> EndGetIssues(IAsyncResult asyncResult);
 
         [Description("Gets the issues visible the authenticated user accross all owned and member repositories")]
         [OperationContract(AsyncPattern = true)]
         [WebInvoke(Method = "GET", UriTemplate = "/user/issues", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
         IAsyncResult BeginGetIssuesFromUser(AsyncCallback callback, object state);
-        List<GithubIssue> EndGetIssuesFromUser(IAsyncResult asyncResult);
+        List<GithubIssueResponse> EndGetIssuesFromUser(IAsyncResult asyncResult);
 
         [Description("Gets the repositories for an organization")]
         [OperationContract(AsyncPattern = true)]
         [WebInvoke(Method = "GET", UriTemplate = "/orgs/{organization}/issues", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
         IAsyncResult BeginGetIssuesFromOrg(string organization, AsyncCallback callback, object state);
-        List<GithubIssue> EndGetIssuesFromOrg(IAsyncResult asyncResult);
+        List<GithubIssueResponse> EndGetIssuesFromOrg(IAsyncResult asyncResult);
 
         [Description("Gets the repositories for a repository")]
         [OperationContract(AsyncPattern = true)]
-        [WebInvoke(Method = "GET", UriTemplate = "/repos/{owner}/{repo}/issues", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
-        IAsyncResult BeginGetIssuesFromRepo(string owner, string repo, AsyncCallback callback, object state);
-        List<GithubIssue> EndGetIssuesFromRepo(IAsyncResult asyncResult);
+        [WebInvoke(Method = "GET", UriTemplate = "/repos/{owner}/{repo}/issues?page={page}", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
+        IAsyncResult BeginGetIssuesFromRepo(string owner, string repo, string page, AsyncCallback callback, object state);
+        List<GithubIssueResponse> EndGetIssuesFromRepo(IAsyncResult asyncResult);
 
         [Description("Gets a single issue")]
         [OperationContract(AsyncPattern = true)]
         [WebInvoke(Method = "GET", UriTemplate = "/repos/{owner}/{repo}/issues/{number}", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
         IAsyncResult BeginGetIssue(string owner, string repo, string number, AsyncCallback callback, object state);
-        GithubIssue EndGetIssue(IAsyncResult asyncResult);
+        GithubIssueResponse EndGetIssue(IAsyncResult asyncResult);
 
         [Description("Creates an issue")]
         [OperationContract(AsyncPattern = true)]
         [WebInvoke(Method = "POST", UriTemplate = "/repos/{owner}/{repo}/issues", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
         IAsyncResult BeginCreateIssue(string owner, string repo, GithubIssueRequest issue, AsyncCallback callback, object state);
-        GithubIssue EndCreateIssue(IAsyncResult asyncResult);
+        GithubIssueResponse EndCreateIssue(IAsyncResult asyncResult);
 
         [Description("Updates an issue")]
         [OperationContract(AsyncPattern = true)]
         [WebInvoke(Method = "PATCH", UriTemplate = "/repos/{owner}/{repo}/issues/{number}", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
         IAsyncResult BeginUpdateIssue(string owner, string repo, string number, GithubIssueRequest issue, AsyncCallback callback, object state);
-        GithubIssue EndUpdateIssue(IAsyncResult asyncResult);
+        GithubIssueResponse EndUpdateIssue(IAsyncResult asyncResult);
 
         [Description("List all labels for this repository")]
         [OperationContract(AsyncPattern = true)]

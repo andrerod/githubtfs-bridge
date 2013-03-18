@@ -30,7 +30,9 @@ namespace GithubTFSBridge
                 ConfigurationManager.AppSettings["TfsDomain"],
                 ConfigurationManager.AppSettings["TfsAddress"],
                 ConfigurationManager.AppSettings["TfsProject"],
-                ConfigurationManager.AppSettings["TfsAreaPath"]);
+                ConfigurationManager.AppSettings["TfsAreaPath"],
+                false,
+                true);
 
             githubTfsBridge.Synchronize();
         }
