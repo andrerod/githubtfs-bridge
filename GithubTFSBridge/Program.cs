@@ -20,14 +20,11 @@ namespace GithubTFSBridge
     {
         public static void Main()
         {
-            GithubTFSBridge githubTfsBridge = new GithubTFSBridge(
+            Bridge githubTfsBridge = new Bridge(
                 ConfigurationManager.AppSettings["GithubUsername"],
                 ConfigurationManager.AppSettings["GithubPassword"],
                 ConfigurationManager.AppSettings["GithubOwner"],
                 ConfigurationManager.AppSettings["GithubRepository"],
-                ConfigurationManager.AppSettings["TfsUsername"],
-                ConfigurationManager.AppSettings["TfsPassword"],
-                ConfigurationManager.AppSettings["TfsDomain"],
                 ConfigurationManager.AppSettings["TfsAddress"],
                 ConfigurationManager.AppSettings["TfsProject"],
                 ConfigurationManager.AppSettings["TfsAreaPath"],
